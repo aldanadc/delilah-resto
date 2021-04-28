@@ -1,0 +1,469 @@
+openapi: "3.0.3"
+info:
+  title: "Delilah Restó"
+  description: "API para la gestión de pedidos de un restaurante. Como cliente podrás registrarte,
+  actualizar tu información, ver el listado de productos disponibles y realizar pedidos. Los administradores 
+  del restaurante tienen la posibilidad de ver todos los pedidos y actualizarlos, así como también de crear 
+  nuevos productos y eliminar otros existentes."
+  version: "1.0.0"
+servers:
+  - url: "http://localhost:8080"
+    description: "Servidor local"
+paths:
+  /login:
+    post:
+      summary: "Hacer login a cuenta de usuario"
+      description: "Permite a un usuario existente hacer log in a su cuenta de acuerdo a sus datos de registro"
+      responses:
+        "200":
+          $ref: "#/components/responses/200Success"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "429":
+          description: "Demasiados intentos de acceso en el tiempo estipulado"
+
+  /register:
+    post:
+      summary: "Crear un nuevo usuario"
+      description: "Permite crear un nuevo usuario con información proveniente de un formulario"
+      requestBody:
+        description: "Información del nuevo usuario"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/User"
+            example:
+              $ref: "#components/examples/User"
+      responses:
+        "201":
+          $ref: "#/components/responses/201Created"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+
+  /products:
+    get:
+      summary: "Retorna una lista con todos los productos disponibles"
+      responses:
+        "200":
+          $ref: "#/components/responses/200Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Products"
+              example:
+                $ref: "#components/examples/Dishes"
+        "500":
+          $ref: "#/components/responses/500defaultError"
+    post:
+      summary: "Crear un nuevo plato y añadir al menú"
+      description: "Permite crear un nuevo plato de acuerdo a la estructura establecida y añadirlo al menú"
+      requestBody:
+        description: "Información del nuevo plato"
+        required: true
+        content:
+          application/json:
+              schema:
+                $ref: "#components/schemas/Product"
+      responses:
+        "201": 
+          $ref: "#/components/responses/201Created"
+          description: "Información del plato creado"
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Product"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401": 
+          $ref: "#/components/responses/401Unauthorized"
+
+  /products/{productId}:
+    get:
+      summary: "Retorna información detallada sobre un plato de acuerdo a su ID"
+      parameters:
+        - # ver esto
+      responses:
+        "200":
+          $ref: "#/components/responses/200Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Product"
+              example:  
+                $ref: "#components/examples/Dish"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "500":
+          $ref: "#/components/responses/500defaultError"
+    patch:
+      summary: "Actualizar un plato existente"
+      description: "Permite actualizar parcialmente la información del plato especificado de acuerdo a la estructura establecida"
+      requestBody:
+        description: "Información del plato a ser actualizada"
+        required: true
+        content:
+          application/json:
+              example:
+                price: 399.99
+      responses:
+        "200": 
+          $ref: "#/components/responses/200Success"
+          description: "Información del plato luego de la actualización"
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Product"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401": 
+          $ref: "#/components/responses/401Unauthorized"
+    delete:
+      summary: "Borrar un plato existente"
+      description: "Permite borrar un plato existente en la base de datos"
+      responses:
+        "204":
+          description: "Plato borrado exitosamente"
+        "401": 
+          $ref: "#/components/responses/401Unauthorized"
+        "500":
+          $ref: "#/components/responses/500defaultError"
+
+  /users:
+    get:
+      summary: "Retorna información sobre todos los usuarios"
+      description: "Retorna una lista de objetos con información de todos los usuarios registrados"
+      responses:
+        "200": 
+          $ref: "#/components/responses/200Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Users"
+        "401": 
+          $ref: "#/components/responses/401Unauthorized"
+        "500":
+          $ref: "#/components/responses/500defaultError"
+
+  /users/{userId}:
+    get:
+      summary: "Retorna información sobre un usuario"
+      description: "Retorna un objeto con información del usuario especificado"
+      responses:
+        "200": 
+          $ref: "#/components/responses/200Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/User"
+              example:
+                $ref: "#components/examples/User"
+        "401": 
+          $ref: "#/components/responses/401Unauthorized"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "500":
+          $ref: "#/components/responses/500defaultError"
+    patch:
+        summary: "Actualizar información de un usuario existente"
+        description: "Permite actualizar parcialmente la información del usuario especificado de acuerdo a la estructura establecida"
+        requestBody:
+          description: "Información actualizada del usuario"
+          required: true
+          content:
+            application/json:
+                example:
+                  address: "10 Downing Street, London SW1A 2AB, UK"
+                  phone_number: "+446565605898"
+        responses:
+          "200": 
+            $ref: "#/components/responses/200Success"
+          "400":
+            $ref: "#/components/responses/400BadRequest"
+          "401": 
+            $ref: "#/components/responses/401Unauthorized"
+    delete:
+      summary: "Borrar un usuario existente"
+      description: "Permite a cada usuario borrar su registro en la base de datos"
+      responses:
+        "204":
+          description: "Usuario borrado exitosamente"
+        "401": 
+          $ref: "#/components/responses/401Unauthorized"
+        "500":
+          $ref: "#/components/responses/500defaultError"
+
+  /users/{user}/favs:
+    get:
+      summary: "Retorna información sobre los platos favoritos de un usuario"
+      description: "Devuelve una lista de platos predilectos del usuario, basada en sus pedidos anteriores y de acuerdo a su ID"
+      responses:
+        "200": 
+          $ref: "#/components/responses/200Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Products"
+              example:  
+                $ref: "#components/examples/Dishes"
+        "401": 
+          $ref: "#/components/responses/401Unauthorized"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "500":
+          $ref: "#/components/responses/500defaultError"
+
+  /orders:
+    get:
+      summary: "Retorna información sobre las órdenes actuales"
+      description: "Retorna una lista de objetos conteniendo información sobre todas las órdenes actuales del restaurante"
+      responses:
+        "200": 
+          $ref: "#/components/responses/200Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Orders"
+        "401": 
+          $ref: "#/components/responses/401Unauthorized"
+        "404": 
+          description: "No hay pedido activos"
+        "500":
+          $ref: "#/components/responses/500defaultError"
+    post:
+      summary: "Crear un nuevo pedido"
+      description: "Crear y enviar una nueva orden al restaurante según lo especificado en el cuerpo de la petición"
+      requestBody:
+        description: "Detalles del pedido a enviar"
+        required: true
+        content:
+          application/json:
+              schema:
+                $ref: "#components/schemas/Order"
+              example:
+                $ref: "#components/examples/Order"
+      responses:
+        "201":
+          $ref: "#/components/responses/201Created"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401": 
+          $ref: "#/components/responses/401Unauthorized"
+        "500":
+          $ref: "#/components/responses/500defaultError"
+
+  /orders/{orderId}:
+    patch:
+      summary: "Actualizar estado de un pedido"
+      description: "El usuario admin puede actualizar el estado de un pedido según corresponda"
+      requestBody:
+        description: "Nuevo estado de la orden"
+        required: true
+        content:
+          application/json:
+              schema:
+                type: object
+              example:
+                order_status: "Entregado"
+      responses:
+        "200": 
+          $ref: "#/components/responses/200Success"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401": 
+          $ref: "#/components/responses/401Unauthorized"
+        "500":
+          $ref: "#/components/responses/500defaultError"
+        
+  # /history:
+
+  # /history/{user}:
+  
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        product_id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        image:
+          type: string
+        ingredients:
+          type: array
+        price:
+          type: number
+          format: float
+    Products:
+      type: array
+      items:
+        $ref: "#components/schemas/Product"
+    User: 
+      type: object
+      properties:
+        user_id:
+          type: string
+        username:
+          type: string
+        full_name:
+          type: string
+        email:
+          type: string
+          format: email
+        phone_number:
+          type: string
+        address: 
+          type: string
+        password:
+          type: string
+          format: password
+        is_admin:
+          type: boolean
+    Users:
+      type: array
+      items:
+        $ref: "#components/schemas/User"
+    OrderItem:
+      type: object
+      properties:
+        product:
+          type: string
+        price:
+          type: number
+          format: float
+        quantity:
+          type: number
+          format: integer
+    Order:
+      type: object
+      properties:
+        order_id:
+          type: number
+        order_status:
+          type: string
+        order_time:
+          type: string
+          format: date-time
+        products:
+          type: array
+          items:
+            $ref: "#components/schemas/OrderItem" 
+        total: 
+          type: number
+          format: float
+        payment_method:
+          type: string
+        delivery_address:
+          type: string
+        customer_name:
+          type: string
+        customer_email:
+          type: string
+        customer_phone:
+          type: string
+    Orders:
+      type: array
+      items:
+        $ref: "#components/schemas/Order"
+    Error:
+      type: object
+      properties:
+        code:
+          type: number
+        message:
+          type: string
+      required:
+        - code
+        - message
+  responses:
+    200Success:
+      description: "Operación exitosa"
+    201Created:
+      description: "Recurso creado correctamente"
+    400BadRequest:
+      description: "La información enviada es incorrecta o inválida para realizar esta operación"
+    401Unauthorized:
+      description: "Credenciales inválidas. Autenticación necesaria para realizar esta operación"
+    403NotAdmin:
+      description: "El usuario no está autorizado a realizar esta acción"
+    404NotFound:
+      description: "El recurso especificado no existe"
+    500defaultError:
+      description: "Error imprevisto, no se pudo completar la acción solicitada"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  examples:
+    Dish:
+      value:
+        name: "Tacos al pastor"
+        description: ""
+        ingredients:
+          - "carne de cerdo y ternera"
+          - "chile picante"
+          - "ajo"
+          - "cebolla"
+          - "cilantro"
+          - "comino"
+          - "sal"
+          - "piña"
+          - "tortilla de maíz"
+        price: 349.99
+    Dishes:
+      value:
+        - name: "Tacos al pastor"
+          description: ""
+          ingredients:
+            - "carne de cerdo y ternera"
+            - "chile picante"
+            - "ajo"
+            - "cebolla"
+            - "cilantro"
+            - "comino"
+            - "sal"
+            - "piña"
+            - "tortilla de maíz"
+          price: 349.99
+        - name: "Carnitas burrito"
+          description: ""
+          ingredients:
+            - "carne de cerdo adobada"
+            - "arroz blanco"
+            - "porotos negros"
+            - "cebolla"
+            - "tomate"
+            - "lechuga"
+            - "cilantro"
+            - "chile picante"
+            - "queso de vaca"
+            - "sal"
+            - "tortilla de maíz"
+          price: 379.99
+    User:
+      value:
+        username: "queen_freddie"
+        full_name: "Freddie Mercury"
+        email: "freddiemercury@gmail.com"
+        phone_number: "+447712345678"
+        address: "1 Logan Pl, Kensington, London, W8 6DE, UK"
+        password: "MyPassword123"
+        is_admin: false
+    Order:
+      value:
+        order_id: 75
+        order_status: "Nuevo"
+        order_time: "2021-05-05T23:23:59.000Z"
+        products:
+          - product: "Tacos al pastor"
+            price: 349.99
+            quantity: 1
+        total: 349.99
+        payment_method: "Efectivo"
+        delivery_address: "1 Logan Pl, Kensington, London, W8 6DE, UK"
+        customer_name: "Freddie Mercury"
+        customer_email: "freddiemercury@gmail.com"
+        customer_phone: "+447712345678"
