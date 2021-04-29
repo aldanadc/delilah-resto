@@ -6,6 +6,11 @@ info:
   del restaurante tienen la posibilidad de ver todos los pedidos y actualizarlos, así como también de crear 
   nuevos productos y eliminar otros existentes."
   version: "1.0.0"
+  contact:
+    name: "Aldana Daniela Casal"
+    url: "xxxyyyzzz"
+  license:
+    name: "MIT License"
 servers:
   - url: "http://localhost:8080"
     description: "Servidor local"
@@ -30,11 +35,11 @@ paths:
         description: "Información del nuevo usuario"
         required: true
         content:
-          application/json:
+          application/x-www-form-urlencoded:
             schema:
-              $ref: "#components/schemas/User"
+              $ref: "#/components/schemas/User"
             example:
-              $ref: "#components/examples/User"
+              $ref: "#/components/examples/User"
       responses:
         "201":
           $ref: "#/components/responses/201Created"
@@ -50,21 +55,21 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#components/schemas/Products"
+                $ref: "#/components/schemas/Products"
               example:
-                $ref: "#components/examples/Dishes"
+                $ref: "#/components/examples/Products"
         "500":
           $ref: "#/components/responses/500defaultError"
     post:
-      summary: "Crear un nuevo plato y añadir al menú"
-      description: "Permite crear un nuevo plato de acuerdo a la estructura establecida y añadirlo al menú"
+      summary: "Crear un nuevo producto y añadirlo al menú"
+      description: "Permite crear un nuevo producto de acuerdo a la estructura establecida y añadirlo al menú"
       requestBody:
         description: "Información del nuevo plato"
         required: true
         content:
           application/json:
               schema:
-                $ref: "#components/schemas/Product"
+                $ref: "#/components/schemas/Product"
       responses:
         "201": 
           $ref: "#/components/responses/201Created"
@@ -72,26 +77,30 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#components/schemas/Product"
+                $ref: "#/components/schemas/Product"
         "400":
           $ref: "#/components/responses/400BadRequest"
         "401": 
           $ref: "#/components/responses/401Unauthorized"
 
   /products/{productId}:
+    parameters:
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: string
     get:
       summary: "Retorna información detallada sobre un plato de acuerdo a su ID"
-      parameters:
-        - # ver esto
       responses:
         "200":
           $ref: "#/components/responses/200Success"
           content:
             application/json:
               schema:
-                $ref: "#components/schemas/Product"
+                $ref: "#/components/schemas/Product"
               example:  
-                $ref: "#components/examples/Dish"
+                $ref: "#/components/examples/Product"
         "404":
           $ref: "#/components/responses/404NotFound"
         "500":
@@ -113,7 +122,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#components/schemas/Product"
+                $ref: "#/components/schemas/Product"
         "400":
           $ref: "#/components/responses/400BadRequest"
         "401": 
@@ -139,13 +148,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#components/schemas/Users"
+                $ref: "#/components/schemas/Users"
         "401": 
           $ref: "#/components/responses/401Unauthorized"
         "500":
           $ref: "#/components/responses/500defaultError"
 
   /users/{userId}:
+    parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
     get:
       summary: "Retorna información sobre un usuario"
       description: "Retorna un objeto con información del usuario especificado"
@@ -155,9 +170,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#components/schemas/User"
+                $ref: "#/components/schemas/User"
               example:
-                $ref: "#components/examples/User"
+                $ref: "#/components/examples/User"
         "401": 
           $ref: "#/components/responses/401Unauthorized"
         "404":
@@ -193,19 +208,25 @@ paths:
         "500":
           $ref: "#/components/responses/500defaultError"
 
-  /users/{user}/favs:
+  /users/{userId}/favs:
     get:
       summary: "Retorna información sobre los platos favoritos de un usuario"
       description: "Devuelve una lista de platos predilectos del usuario, basada en sus pedidos anteriores y de acuerdo a su ID"
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
       responses:
         "200": 
           $ref: "#/components/responses/200Success"
           content:
             application/json:
               schema:
-                $ref: "#components/schemas/Products"
+                $ref: "#/components/schemas/Products"
               example:  
-                $ref: "#components/examples/Dishes"
+                $ref: "#/components/examples/Products"
         "401": 
           $ref: "#/components/responses/401Unauthorized"
         "404":
@@ -223,11 +244,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#components/schemas/Orders"
+                $ref: "#/components/schemas/Orders"
         "401": 
           $ref: "#/components/responses/401Unauthorized"
         "404": 
-          description: "No hay pedido activos"
+          description: "No hay pedidos activos"
         "500":
           $ref: "#/components/responses/500defaultError"
     post:
@@ -239,9 +260,9 @@ paths:
         content:
           application/json:
               schema:
-                $ref: "#components/schemas/Order"
+                $ref: "#/components/schemas/Order"
               example:
-                $ref: "#components/examples/Order"
+                $ref: "#/components/examples/Order"
       responses:
         "201":
           $ref: "#/components/responses/201Created"
@@ -256,15 +277,26 @@ paths:
     patch:
       summary: "Actualizar estado de un pedido"
       description: "El usuario admin puede actualizar el estado de un pedido según corresponda"
+      parameters:
+        - in: path
+          name: orderId
+          required: true
+          schema:
+            type: integer
       requestBody:
         description: "Nuevo estado de la orden"
         required: true
         content:
           application/json:
               schema:
-                type: object
-              example:
-                order_status: "Entregado"
+                type: string
+                enum:
+                  - "Nuevo"
+                  - "Confirmado"
+                  - "Preparando"
+                  - "Enviando"
+                  - "Cancelado"
+                  - "Entregado"
       responses:
         "200": 
           $ref: "#/components/responses/200Success"
@@ -275,9 +307,76 @@ paths:
         "500":
           $ref: "#/components/responses/500defaultError"
         
-  # /history:
+  /history:
+    get:
+      summary: "Retorna información histórica de órdenes recibidas"
+      description: "Retorna una lista de objetos conteniendo información sobre todas las órdenes pasadas recibidas por el restaurante"
+      responses:
+        "200": 
+          $ref: "#/components/responses/200Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Orders"
+        "401": 
+          $ref: "#/components/responses/401Unauthorized"
+        "404": 
+          description: "No hay pedidos en el historial"
+        "500":
+          $ref: "#/components/responses/500defaultError"
 
-  # /history/{user}:
+  /history/:date:
+    get:
+      summary: "Retorna información histórica de órdenes recibidas de acuerdo a su fecha"
+      description: "Retorna una lista de objetos conteniendo información sobre órdenes pasadas recibidas 
+      por el restaurante en la fecha especificada"
+      parameters:
+        - in: query
+          name: date
+          schema:
+            type: string
+            format: date
+          example:
+            "2021-04-05"
+      responses:
+        "200": 
+          $ref: "#/components/responses/200Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Orders"
+        "401": 
+          $ref: "#/components/responses/401Unauthorized"
+        "404": 
+          description: "No hay pedidos registrados en la fecha especificada"
+        "500":
+          $ref: "#/components/responses/500defaultError"
+  
+  
+  /history/{userId}:
+    get:
+      summary: "Retorna información histórica de órdenes realizadas por un usuario"
+      description: "Retorna una lista de objetos conteniendo información sobre todas las órdenes pasadas 
+      realizadas por el usuario especificado"
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+      responses:
+        "200": 
+          $ref: "#/components/responses/200Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Orders"
+        "401": 
+          $ref: "#/components/responses/401Unauthorized"
+        "404": 
+          description: "No hay pedidos en el historial"
+        "500":
+          $ref: "#/components/responses/500defaultError"
   
 components:
   schemas:
@@ -294,13 +393,15 @@ components:
           type: string
         ingredients:
           type: array
+          items:
+            type: string
         price:
           type: number
           format: float
     Products:
       type: array
       items:
-        $ref: "#components/schemas/Product"
+        $ref: "#/components/schemas/Product"
     User: 
       type: object
       properties:
@@ -325,7 +426,7 @@ components:
     Users:
       type: array
       items:
-        $ref: "#components/schemas/User"
+        $ref: "#/components/schemas/User"
     OrderItem:
       type: object
       properties:
@@ -335,13 +436,12 @@ components:
           type: number
           format: float
         quantity:
-          type: number
-          format: integer
+          type: integer
     Order:
       type: object
       properties:
         order_id:
-          type: number
+          type: integer
         order_status:
           type: string
         order_time:
@@ -350,7 +450,7 @@ components:
         products:
           type: array
           items:
-            $ref: "#components/schemas/OrderItem" 
+            $ref: "#/components/schemas/OrderItem" 
         total: 
           type: number
           format: float
@@ -367,12 +467,12 @@ components:
     Orders:
       type: array
       items:
-        $ref: "#components/schemas/Order"
+        $ref: "#/components/schemas/Order"
     Error:
       type: object
       properties:
         code:
-          type: number
+          type: integer
         message:
           type: string
       required:
@@ -388,7 +488,7 @@ components:
     401Unauthorized:
       description: "Credenciales inválidas. Autenticación necesaria para realizar esta operación"
     403NotAdmin:
-      description: "El usuario no está autorizado a realizar esta acción"
+      description: "El usuario no es administrador y no está autorizado a realizar esta acción"
     404NotFound:
       description: "El recurso especificado no existe"
     500defaultError:
@@ -398,10 +498,11 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
   examples:
-    Dish:
+    Product:
       value:
         name: "Tacos al pastor"
-        description: ""
+        description: "Delicioso taco de carne de cerdo y ternera marinada, vegetales y condimentos, acompañado
+        de una deliciosa salsa picante"
         ingredients:
           - "carne de cerdo y ternera"
           - "chile picante"
@@ -413,10 +514,11 @@ components:
           - "piña"
           - "tortilla de maíz"
         price: 349.99
-    Dishes:
+    Products:
       value:
         - name: "Tacos al pastor"
-          description: ""
+          description: "Delicioso taco de carne de cerdo y ternera marinada, vegetales y condimentos, acompañado
+          de una deliciosa salsa picante"
           ingredients:
             - "carne de cerdo y ternera"
             - "chile picante"
@@ -429,7 +531,8 @@ components:
             - "tortilla de maíz"
           price: 349.99
         - name: "Carnitas burrito"
-          description: ""
+          description: "Nuestro burrito estrella, preparado con carne de cerdo adobada, vegetales, porotos negros 
+          y arroz, acompañado de una deliciosa salsa picante"
           ingredients:
             - "carne de cerdo adobada"
             - "arroz blanco"
@@ -439,7 +542,7 @@ components:
             - "lechuga"
             - "cilantro"
             - "chile picante"
-            - "queso de vaca"
+            - "palta"
             - "sal"
             - "tortilla de maíz"
           price: 379.99
