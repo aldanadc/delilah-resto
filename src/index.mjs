@@ -36,41 +36,46 @@ function main() {
 
 main();
 
+//Handlers:
+//function doLogin (req, res) => {}
 
-//function doLogin (req, res, next) => {}
+//function register (req, res) => {}
 
-//function register (req, res, next) => {}
+//function showFullHistory (req, res) => {}
 
-//function showFullHistory (req, res, next) => {}
+//function showHistoryByDate (req, res) => {}
 
-//function showHistoryByDate (req, res, next) => {}
+//function showHistoryByUser (req, res) => {}
 
-//function showHistoryByUser (req, res, next) => {}
+//function showAllOrders (req, res) => {}
 
-//function showAllOrders (req, res, next) => {}
+//function showOneOrder (req, res) => {}
 
-//function showOneOrder (req, res, next) => {}
+//function createNewOrder (req, res) => {}
 
-//function createNewOrder (req, res, next) => {}
+//function updateOrder (req, res) => {}
 
-//function updateOrder (req, res, next) => {}
+//function showAllProducts (req, res) => {}
 
-//function showAllProducts (req, res, next) => {}
+//function createNewProduct (req, res) => {}
 
-//function createNewProduct (req, res, next) => {}
+//function showOneProduct (req, res) => {}
 
-//function showOneProduct (req, res, next) => {}
+//function updateProduct (req, res) => {}
 
-//function updateProduct (req, res, next) => {}
+//function deleteProduct (req, res) => {}
 
-//function deleteProduct (req, res, next) => {}
+//function showAllUsers (req, res) => {}
 
-//function showAllUsers (req, res, next) => {}
+//function showOneUser (req, res) => {}
 
-//function showOneUser (req, res, next) => {}
+//function updateUser (req, res) => {}
 
-//function updateUser (req, res, next) => {}
+//function deleteUser (req, res) => {}
 
-//function deleteUser (req, res, next) => {}
+//function getFavs (req, res) => {}
 
-//function getFavs (req, res, next) => {}
+
+//Middleware:
+//authentication
+//is admin
