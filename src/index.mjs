@@ -1,0 +1,76 @@
+import express, { json, urlencoded} from "express";
+import { getRouter as getHistoryRouter } from "./routers/history.router.mjs";
+import { getRouter as getLoginRouter } from "./routers/login.router.mjs";
+import { getRouter as getOrdersRouter } from "./routers/orders.router.mjs";
+import { getRouter as getProductsRouter } from "./routers/products.router.mjs";
+import { getRouter as getRegisterRouter } from "./routers/register.router.mjs";
+import { getRouter as getUsersRouter } from "./routers/users.router.mjs";
+
+
+function loadMiddlewares(server) {
+  server.use(json());
+  server.use(urlencoded( {extended: true} ));
+}
+
+function loadRouters(server) {
+  const historyRouter = getHistoryRouter();
+  const loginRouter = getLoginRouter();
+  const ordersRouter = getOrdersRouter();
+  const productsRouter = getProductsRouter();
+  const registerRouter = getRegisterRouter();
+  const usersRouter = getUsersRouter();
+  server.use("/api/1.0.0", historyRouter);
+  server.use("/api/1.0.0", loginRouter);
+  server.use("/api/1.0.0", ordersRouter);
+  server.use("/api/1.0.0", productsRouter);
+  server.use("/api/1.0.0", registerRouter);
+  server.use("/api/1.0.0", usersRouter);
+}
+
+function main() {
+  const server = express();
+  loadMiddlewares(server);
+  loadRouters(server);
+  server.listen(8080, () => console.log("Server is ready..."))
+}
+
+main();
+
+
+//function doLogin (req, res, next) => {}
+
+//function register (req, res, next) => {}
+
+//function showFullHistory (req, res, next) => {}
+
+//function showHistoryByDate (req, res, next) => {}
+
+//function showHistoryByUser (req, res, next) => {}
+
+//function showAllOrders (req, res, next) => {}
+
+//function showOneOrder (req, res, next) => {}
+
+//function createNewOrder (req, res, next) => {}
+
+//function updateOrder (req, res, next) => {}
+
+//function showAllProducts (req, res, next) => {}
+
+//function createNewProduct (req, res, next) => {}
+
+//function showOneProduct (req, res, next) => {}
+
+//function updateProduct (req, res, next) => {}
+
+//function deleteProduct (req, res, next) => {}
+
+//function showAllUsers (req, res, next) => {}
+
+//function showOneUser (req, res, next) => {}
+
+//function updateUser (req, res, next) => {}
+
+//function deleteUser (req, res, next) => {}
+
+//function getFavs (req, res, next) => {}

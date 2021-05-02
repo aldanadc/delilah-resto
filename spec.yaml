@@ -8,11 +8,11 @@ info:
   version: "1.0.0"
   contact:
     name: "Aldana Daniela Casal"
-    url: "xxxyyyzzz"
+    url: "https://github.com/aldanadc"
   license:
-    name: "MIT License"
+    name: "ISC"
 servers:
-  - url: "http://localhost:8080"
+  - url: "http://localhost:8080/api/1.0.0"
     description: "Servidor local"
 paths:
   /login:
@@ -274,15 +274,33 @@ paths:
           $ref: "#/components/responses/500defaultError"
 
   /orders/{orderId}:
-    patch:
-      summary: "Actualizar estado de un pedido"
-      description: "El usuario admin puede actualizar el estado de un pedido según corresponda"
-      parameters:
+    parameters:
         - in: path
           name: orderId
           required: true
           schema:
             type: integer
+    get:
+      summary: "Ver detalles y estado de un pedido"
+      description: "Retorna un objeto con la información detallada de la orden especificada"
+      responses:
+        "200": 
+          $ref: "#/components/responses/200Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+              example:
+                $ref: "#/components/examples/Order"
+        "401": 
+          $ref: "#/components/responses/401Unauthorized"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "500":
+          $ref: "#/components/responses/500defaultError"
+    patch:
+      summary: "Actualizar estado de un pedido"
+      description: "El usuario admin puede actualizar el estado de un pedido según corresponda"
       requestBody:
         description: "Nuevo estado de la orden"
         required: true
