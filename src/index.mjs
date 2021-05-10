@@ -1,4 +1,5 @@
 import express, { json, urlencoded} from "express";
+import { ENV } from "./config/env.mjs"
 import { getRouter as getHistoryRouter } from "./routers/history.router.mjs";
 import { getRouter as getLoginRouter } from "./routers/login.router.mjs";
 import { getRouter as getOrdersRouter } from "./routers/orders.router.mjs";
@@ -19,19 +20,20 @@ function loadRouters(server) {
   const productsRouter = getProductsRouter();
   const registerRouter = getRegisterRouter();
   const usersRouter = getUsersRouter();
-  server.use("/api/1.0.0", historyRouter);
+  
   server.use("/api/1.0.0", loginRouter);
-  server.use("/api/1.0.0", ordersRouter);
-  server.use("/api/1.0.0", productsRouter);
   server.use("/api/1.0.0", registerRouter);
   server.use("/api/1.0.0", usersRouter);
+  server.use("/api/1.0.0", productsRouter);
+  server.use("/api/1.0.0", ordersRouter);
+  server.use("/api/1.0.0", historyRouter);
 }
 
 function main() {
   const server = express();
   loadMiddlewares(server);
   loadRouters(server);
-  server.listen(8080, () => console.log("Server is ready..."))
+  server.listen(ENV.SERVER_PORT, () => console.log(`Server is ready on port ${ENV.SERVER_PORT}`))
 }
 
 main();
