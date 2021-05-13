@@ -402,7 +402,7 @@ components:
       type: object
       properties:
         product_id:
-          type: string
+          type: number
         name:
           type: string
         description:
@@ -410,12 +410,11 @@ components:
         image:
           type: string
         ingredients:
-          type: array
-          items:
-            type: string
+          type: string
         price:
           type: number
-          format: float
+        is_disabled:
+          type: boolean
     Products:
       type: array
       items:
@@ -424,7 +423,7 @@ components:
       type: object
       properties:
         user_id:
-          type: string
+          type: number
         username:
           type: string
         full_name:
@@ -448,8 +447,8 @@ components:
     OrderItem:
       type: object
       properties:
-        product:
-          type: string
+        product_id:
+          type: number
         price:
           type: number
           format: float
@@ -462,7 +461,14 @@ components:
           type: integer
         order_status:
           type: string
-        order_time:
+          enum:
+            - "Nuevo"
+            - "Confirmado"
+            - "Preparando"
+            - "Enviando"
+            - "Cancelado"
+            - "Entregado"
+        order_date:
           type: string
           format: date-time
         products:

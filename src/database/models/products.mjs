@@ -1,4 +1,7 @@
-export function createModel(sequelize, DataTypes) {
+import Sequelize from 'sequelize';
+const { DataTypes } = Sequelize;
+
+export function createModel(sequelize) {
   const Product = sequelize.define('product', {
     id: {
       type: DataTypes.INTEGER, autoIncrement: true,
@@ -14,7 +17,7 @@ export function createModel(sequelize, DataTypes) {
       allowNull: false
     },
     image: {
-      type: DataTypes.STRING,  //STRING.BINARY?
+      type: DataTypes.STRING,
       allowNull: false
     },
     ingredients: {

@@ -1,6 +1,7 @@
-//const { DataTypes } = require("sequelize");
+import Sequelize from 'sequelize';
+const { DataTypes } = Sequelize;
 
-export function createModel(sequelize, DataTypes) {
+export function createModel(sequelize) {
   const User = sequelize.define('users', {
     id: {
       type: DataTypes.INTEGER, autoIncrement: true,
@@ -32,7 +33,7 @@ export function createModel(sequelize, DataTypes) {
       allowNull: false
     },
     is_admin: {
-      type: DataTypes.BOOLEAN, // BIT?
+      type: DataTypes.BOOLEAN,
       allowNull: false
     },
   });
@@ -41,9 +42,4 @@ export function createModel(sequelize, DataTypes) {
 };
 
 
-// unir productos en tabla orders_products con orders. traer varias líneas?
-// dataTypes SQL vs sequelize
-// dataType para imagen
-// dataType decimal
-// nombre tabla en código si está bien
-// array en yaml, cómo pasa la db un string a array?
+

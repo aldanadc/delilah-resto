@@ -1,5 +1,6 @@
 import express, { json, urlencoded} from "express";
-import { ENV } from "./config/env.mjs"
+import { ENV } from "./config/env.mjs";
+import connect from "./config/db.mjs";
 import { getRouter as getHistoryRouter } from "./routers/history.router.mjs";
 import { getRouter as getLoginRouter } from "./routers/login.router.mjs";
 import { getRouter as getOrdersRouter } from "./routers/orders.router.mjs";
@@ -33,8 +34,12 @@ function main() {
   const server = express();
   loadMiddlewares(server);
   loadRouters(server);
-  server.listen(ENV.SERVER_PORT, () => console.log(`Server is ready on port ${ENV.SERVER_PORT}`))
-}
+
+  connect()
+    .then(() => {
+      server.listen(ENV.SERVER_PORT, () => console.log(`Server is ready on port ${ENV.SERVER_PORT}`))
+    })
+};
 
 main();
 
