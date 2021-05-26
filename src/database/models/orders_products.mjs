@@ -2,7 +2,7 @@ import Sequelize from 'sequelize';
 const { DataTypes } = Sequelize;
 
 export function createModel(sequelize) {
-  const Order_Products = sequelize.define('orders_products', {
+  const Orders_Products = sequelize.define('orders_products', {
     id: {
       type: DataTypes.INTEGER, autoIncrement: true,
       primaryKey: true,
@@ -22,7 +22,7 @@ export function createModel(sequelize) {
     },
   }); //INSERTAR PRODUCT_ID Y ORDER_ID DEFINIENDO RELACIÓN
 
-  return Order_Products;
+  return Orders_Products;
 };
 
 //Product.belongsToMany(Order, { through: 'orders_products' })

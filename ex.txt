@@ -2,11 +2,8 @@ users db?
 igualar formato en yaml con db? string vs array
 unir distintos productos en tabla orders_products con orders. traer varias líneas?
 dataTypes SQL vs sequelize
-dataType para img
+dataType para img / URL relativa, ver multer
 dataType decimal
-
-GIFOS:
-slider para trending gifs vista mobile
 
 
 
