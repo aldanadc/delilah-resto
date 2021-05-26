@@ -70,7 +70,8 @@ export async function getProducts(filter = {}) {
 
 export async function createProduct(productInfo) {
   /** @type {Sequelize.Model} */
-  const newProduct = await DB_MODELS.Product.create(productInfo);
+  const Product = DB_MODELS.Product;
+  const newProduct = await Product.create(productInfo);
   return newProduct;
 }
 
@@ -85,7 +86,6 @@ export async function deleteProduct(filter = {}) {
   return deletedProduct
 }
 
-
 export async function updateProduct(updatedInfo, filter = {}) {
   /** @type {Sequelize.Model} */
   const Product = DB_MODELS.Product;
@@ -95,4 +95,11 @@ export async function updateProduct(updatedInfo, filter = {}) {
     //attributes: { exclude: ['createdAt', 'updatedAt'] },
     });
   return product
+}
+
+export async function createUser(userInfo) {
+  /** @type {Sequelize.Model} */
+  const User = DB_MODELS.User;
+  const newUser = await User.create(userInfo);
+  return newUser;
 }
