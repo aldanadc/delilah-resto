@@ -5,9 +5,9 @@ export function getRouter() {
   const router = new Router();
   router.get("/products", getAllProducts)
   router.post("/products", createNewProduct)
-  router.get("/products/:id", getOneProduct)
-  router.patch("/products/:id", updateOneProduct)
-  router.delete("/products/:id", deleteAProduct)
+  router.get("/products/:product_id", getOneProduct)
+  router.patch("/products/:product_id", updateOneProduct)
+  router.delete("/products/:product_id", deleteAProduct)
   return router;
 }
 

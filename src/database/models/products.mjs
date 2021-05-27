@@ -3,7 +3,7 @@ const { DataTypes } = Sequelize;
 
 export function createModel(sequelize) {
   const Product = sequelize.define('products', {
-    id: {
+    product_id: {
       type: DataTypes.INTEGER, autoIncrement: true,
       primaryKey: true,
       allowNull: false

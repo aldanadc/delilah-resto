@@ -11,11 +11,12 @@ function prueba(req, res) {
   res.send("hola hola esto anda")
 }
 
+//ESTO NO SIRVE PARA NADA
 const login = async (request, response) => {
   const userInfo = request.body;
   const username = userInfo.username;
   const password = userInfo.password;
-  const user = await authenticateUser(username, password);
+  const user = await authenticateUser(userInfo);
 }
 
 function userIsLoggedIn(request, response) {

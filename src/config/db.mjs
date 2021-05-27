@@ -1,5 +1,4 @@
 import Sequelize from "sequelize";
-//const sequelize = new Sequelize();
 import { ENV } from "./env.mjs"
 import { createModel as createUsersModel } from '../database/models/users.mjs';
 import { createModel as createProductsModel } from '../database/models/products.mjs';
@@ -10,11 +9,6 @@ import { createModel as createProducts_Users } from '../database/models/products
 export const DB_MODELS = {};
 
 export default async function connect() {
-  // const AUTH = ENV.DB_USERNAME || ENV.DB_PASSWORD
-  //   ? `${ENV.DB_USERNAME}:${ENV.DB_PASSWORD}@` 
-  //   : '';
-  // const URL = `${ENV.DB_CONNECTOR}://${AUTH}${ENV.DB_HOST}:${ENV.DB_PORT}/${ENV.DB_NAME}`;
-  // console.log(URL);
   const sequelize = new Sequelize(ENV.DB_NAME, ENV.DB_USERNAME, ENV.DB_PASSWORD, {
     host: ENV.DB_HOST,
     port: ENV.DB_PORT,
@@ -32,11 +26,11 @@ export default async function connect() {
     DB_MODELS.Products_Users = createProducts_Users(sequelize);
 
     DB_MODELS.User.hasMany(DB_MODELS.Order);
-    DB_MODELS.Order.belongsTo(DB_MODELS.User);
-    DB_MODELS.Product.belongsToMany(DB_MODELS.Order, { through: 'orders_products' });
-    DB_MODELS.Order.belongsToMany(DB_MODELS.Product, { through: 'orders_products' });
-    DB_MODELS.User.belongsToMany(DB_MODELS.Product, { through: 'products_users' });
-    DB_MODELS.Product.belongsToMany(DB_MODELS.User, { through: 'products_users' })
+    DB_MODELS.Order.belongsTo(DB_MODELS.User, { foreignKey: "user_id" });
+    DB_MODELS.Product.belongsToMany(DB_MODELS.Order, { /*as: "items",*/ through: 'orders_products', foreignKey: "product_id" });
+    DB_MODELS.Order.belongsToMany(DB_MODELS.Product, { through: 'orders_products', foreignKey: "order_id" });
+    DB_MODELS.User.belongsToMany(DB_MODELS.Product, { through: 'products_users', foreignKey: "user_id" });
+    DB_MODELS.Product.belongsToMany(DB_MODELS.User, { /*as: "favs",*/ through: 'products_users', foreignKey: "product_id" })
 
     await sequelize.sync({ force: false })
   }catch (error) {
@@ -45,7 +39,7 @@ export default async function connect() {
   }
 }
 
-
+//VALIDATE USER
 export async function validateUserAgainstDB(username, password) {
   /** @type {Sequelize.Model} */
   const Users = DB_MODELS.User;
@@ -58,6 +52,7 @@ export async function validateUserAgainstDB(username, password) {
   return user;
 }
 
+//PRODUCTS
 export async function getProducts(filter = {}) {
   /** @type {Sequelize.Model} */
   const Product = DB_MODELS.Product;
@@ -80,7 +75,6 @@ export async function deleteProduct(filter = {}) {
   const Product = DB_MODELS.Product;
   const deletedProduct =  Product.destroy({
     where: filter,
-    //attributes: { exclude: ['createdAt', 'updatedAt'] },
   });
     
   return deletedProduct
@@ -92,14 +86,80 @@ export async function updateProduct(updatedInfo, filter = {}) {
   const product =  Product.update(updatedInfo,
     {
     where: filter,
-    //attributes: { exclude: ['createdAt', 'updatedAt'] },
     });
   return product
 }
 
+//USERS
 export async function createUser(userInfo) {
   /** @type {Sequelize.Model} */
   const User = DB_MODELS.User;
   const newUser = await User.create(userInfo);
   return newUser;
+}
+
+
+export async function getUsers(filter = {}) {
+  /** @type {Sequelize.Model} */
+  const User = DB_MODELS.User;
+  const user =  User.findAll({
+    where: filter,
+    attributes: { exclude: ['createdAt', 'updatedAt'] },
+  });
+  return user
+}
+
+//FAVS
+export async function getFavs(filter = {}) {
+  /** @type {Sequelize.Model} */
+  const Favs = DB_MODELS.Products_Users;
+  const userFavs = Favs.findAll({
+    where: filter,
+    attributes: { exclude: ['id', 'createdAt', 'updatedAt']},
+    include: [DB_MODELS.Product] //NO ANDA, dice que no hay asociación
+  });
+
+  return userFavs
+}
+
+
+//ORDERS
+export async function getOrders(filter = {}) {
+  /** @type {Sequelize.Model} */
+  const Order = DB_MODELS.Order;
+  const order =  Order.findAll({
+    where: filter,
+    //include: ["items"]
+  });
+  return order
+}
+
+//UPDATE ORDER STATUS FUNCIONA PERO DEVUELVE 1
+export async function updateOrderStatus(updatedStatus, filter = {}) {
+  /** @type {Sequelize.Model} */
+  const Order = DB_MODELS.Order;
+  const updatedOrder =  Order.update( { status: updatedStatus },
+    {
+    where: filter,
+    attributes: { exclude: ['createdAt'] }
+    });
+  return updatedOrder
+}
+
+
+//CREATE ORDER
+export async function createOrder(orderInfo) {
+  /** @type {Sequelize.Model} */
+  const Order = DB_MODELS.Order;
+  const newOrder = await Order.create(orderInfo);
+  return newOrder;
+}
+
+
+//CREATE ORDER PRODUCTS
+export async function addProductsToOrder(productsInfo) {
+  /** @type {Sequelize.Model} */
+  const Items = DB_MODELS.Orders_Products;
+  const orderItems = await Items.create(productsInfo);
+  return orderItems
 }

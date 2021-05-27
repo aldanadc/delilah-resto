@@ -3,7 +3,7 @@ const { DataTypes } = Sequelize;
 
 export function createModel(sequelize) {
   const User = sequelize.define('users', {
-    id: {
+    user_id: {
       type: DataTypes.INTEGER, autoIncrement: true,
       primaryKey: true,
       allowNull: false
