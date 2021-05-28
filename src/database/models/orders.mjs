@@ -14,16 +14,15 @@ export function createModel(sequelize) {
       defaultValue: "nuevo",
       allowNull: false
     },
-    // order_date: {
-    //   type: DataTypes.DATE,
-    //   allowNull: false
-    // },
     payment_method: {
       type: DataTypes.ENUM,
       values: ["efectivo", "tarjeta"],
       allowNull: false
     },
-  }); //INSERTAR USER_ID DEFINIENDO RELACIÓN
+  }, {
+    createdAt: "created_at",
+    updatedAt: "updated_at"
+  });
 
   return Order;
 };

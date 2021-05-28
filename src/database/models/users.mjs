@@ -10,7 +10,8 @@ export function createModel(sequelize) {
     },
     username: {
       type: DataTypes.STRING,
-      allowNull: false //required: true ??
+      allowNull: false,
+      unique: true
     },
     full_name: {
       type: DataTypes.STRING,
@@ -37,6 +38,9 @@ export function createModel(sequelize) {
       allowNull: false,
       default: false
     },
+  }, {
+    createdAt: "created_at",
+    updatedAt: "updated_at"
   });
 
   return User;

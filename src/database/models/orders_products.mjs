@@ -12,15 +12,10 @@ export function createModel(sequelize) {
       type: DataTypes.INTEGER,
       defaultValue: 1,
     },
-    product_price: {
-      type: DataTypes.DECIMAL,
-      allowNull: false
-    },
-    product_total: {
-      type: DataTypes.DECIMAL,
-      allowNull: false
-    },
-  }); //INSERTAR PRODUCT_ID Y ORDER_ID DEFINIENDO RELACIÓN
+  }, {
+    createdAt: "created_at",
+    updatedAt: "updated_at"
+  });
 
   return Orders_Products;
 };

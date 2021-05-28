@@ -7,10 +7,6 @@ export function getRouter() {
   return router;
 }
 
-function prueba(req, res) {
-  res.send("hola hola esto anda")
-}
-
 //ESTO NO SIRVE PARA NADA
 const login = async (request, response) => {
   const userInfo = request.body;

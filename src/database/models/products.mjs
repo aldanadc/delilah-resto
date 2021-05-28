@@ -32,6 +32,9 @@ export function createModel(sequelize) {
       type: DataTypes.BOOLEAN,
       allowNull: false
     },
+  }, {
+    createdAt: "created_at",
+    updatedAt: "updated_at"
   });
 
   return Product;

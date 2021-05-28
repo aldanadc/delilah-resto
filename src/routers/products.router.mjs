@@ -1,9 +1,11 @@
 import { Router } from "express";
 import { createProduct, getProducts, deleteProduct, updateProduct } from "../config/db.mjs";
+import { verifyIfAdmin } from "../middlewares/auth.middleware.mjs";
+import { verifyToken } from "../middlewares/auth.middleware.mjs";
 
 export function getRouter() {
   const router = new Router();
-  router.get("/products", getAllProducts)
+  router.get("/products", verifyToken, verifyIfAdmin, getAllProducts)
   router.post("/products", createNewProduct)
   router.get("/products/:product_id", getOneProduct)
   router.patch("/products/:product_id", updateOneProduct)

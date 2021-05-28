@@ -25,14 +25,14 @@ export default async function connect() {
     DB_MODELS.Orders_Products = createOrders_ProductsModel(sequelize);
     DB_MODELS.Products_Users = createProducts_Users(sequelize);
 
-    DB_MODELS.User.hasMany(DB_MODELS.Order);
+    DB_MODELS.User.hasMany(DB_MODELS.Order, { foreignKey: "user_id" });
     DB_MODELS.Order.belongsTo(DB_MODELS.User, { foreignKey: "user_id" });
-    DB_MODELS.Product.belongsToMany(DB_MODELS.Order, { /*as: "items",*/ through: 'orders_products', foreignKey: "product_id" });
+    DB_MODELS.Product.belongsToMany(DB_MODELS.Order, { through: 'orders_products', foreignKey: "product_id" });
     DB_MODELS.Order.belongsToMany(DB_MODELS.Product, { through: 'orders_products', foreignKey: "order_id" });
     DB_MODELS.User.belongsToMany(DB_MODELS.Product, { through: 'products_users', foreignKey: "user_id" });
-    DB_MODELS.Product.belongsToMany(DB_MODELS.User, { /*as: "favs",*/ through: 'products_users', foreignKey: "product_id" })
+    DB_MODELS.Product.belongsToMany(DB_MODELS.User, { through: 'products_users', foreignKey: "product_id" })
 
-    await sequelize.sync({ force: false })
+  await sequelize.sync({ force: false })
   }catch (error) {
     console.error('Unable to connect to the database:', error);
     throw error;
@@ -58,7 +58,7 @@ export async function getProducts(filter = {}) {
   const Product = DB_MODELS.Product;
   const product =  Product.findAll({
     where: filter,
-    attributes: { exclude: ['createdAt', 'updatedAt'] },
+    attributes: { exclude: ['created_at', 'updated_at'] },
   });
   return product
 }
@@ -104,7 +104,7 @@ export async function getUsers(filter = {}) {
   const User = DB_MODELS.User;
   const user =  User.findAll({
     where: filter,
-    attributes: { exclude: ['createdAt', 'updatedAt'] },
+    attributes: { exclude: ['created_at', 'updated_at'] },
   });
   return user
 }
@@ -115,7 +115,7 @@ export async function getFavs(filter = {}) {
   const Favs = DB_MODELS.Products_Users;
   const userFavs = Favs.findAll({
     where: filter,
-    attributes: { exclude: ['id', 'createdAt', 'updatedAt']},
+    attributes: { exclude: ['id', 'created_at', 'updated_at']},
     include: [DB_MODELS.Product] //NO ANDA, dice que no hay asociación
   });
 
@@ -141,7 +141,7 @@ export async function updateOrderStatus(updatedStatus, filter = {}) {
   const updatedOrder =  Order.update( { status: updatedStatus },
     {
     where: filter,
-    attributes: { exclude: ['createdAt'] }
+    attributes: { exclude: ['created_at'] }
     });
   return updatedOrder
 }
@@ -152,14 +152,19 @@ export async function createOrder(orderInfo) {
   /** @type {Sequelize.Model} */
   const Order = DB_MODELS.Order;
   const newOrder = await Order.create(orderInfo);
+  const newOrderId = newOrder.order_id;
+  await addProductsToOrder(orderInfo.order_products, newOrderId)
   return newOrder;
 }
 
 
 //CREATE ORDER PRODUCTS
-export async function addProductsToOrder(productsInfo) {
+export async function addProductsToOrder(productsInfo, orderId) {
   /** @type {Sequelize.Model} */
   const Items = DB_MODELS.Orders_Products;
+  productsInfo.order_id = orderId;
+  console.log(productsInfo);
   const orderItems = await Items.create(productsInfo);
   return orderItems
 }
+
