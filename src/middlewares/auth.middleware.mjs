@@ -9,6 +9,7 @@ export async function authenticateUser(request, response, next) {
   const user = await validateUserAgainstDB(username, password);
   if (user) {
     const token = jwt.sign({
+      user_id: user.user_id,
       username: user.username,
       full_name: user.full_name,
       email: user.email,
@@ -35,8 +36,8 @@ export async function authenticateUser(request, response, next) {
 
 
 export async function verifyToken(request, response, next) {
-  const token = request.headers.authorization.replace("Bearer ", "");
   try {
+    const token = request.headers.authorization.replace("Bearer ", "");
     if (jwt.verify(token, secret)) {
       next();
     }
@@ -48,6 +49,13 @@ export async function verifyToken(request, response, next) {
         status: "Request failed",
         message: "Expired user token, please log in again"
       })
+    }else if (request.headers.authorization === undefined) {
+      response
+        .status(403)
+        .json({
+          status: "Request failed",
+          message: "Credentials needed to access content"
+        })
     }else {
       response
         .status(403)
@@ -85,3 +93,12 @@ export async function verifyIfAdmin(request, response, next) {
       })
   }
 }
+
+
+// export async function verifyUserId(request, response, next) {
+//   const token = request.headers.authorization.replace("Bearer ", "");
+//   const tokenInfo = jwt.decode(token);
+
+//   try {
+
+//   }
