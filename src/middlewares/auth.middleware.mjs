@@ -14,13 +14,9 @@ export async function authenticateUser(request, response, next) {
       full_name: user.full_name,
       email: user.email,
       is_admin: user.is_admin
-    }, secret, { expiresIn: 15 * 60});
+    }, secret, { expiresIn: 30 * 60});
 
     request.user = {
-      // username: user.username,
-      // full_name: user.full_name,
-      // password: undefined,
-      //is_admin: user.is_admin,
       token: token
     }
     next();

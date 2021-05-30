@@ -1,35 +1,27 @@
 import { Router } from "express";
 import { createProduct, getProducts, deleteProduct, updateProduct } from "../config/db.mjs";
-import { verifyIfAdmin } from "../middlewares/auth.middleware.mjs";
-import { verifyToken } from "../middlewares/auth.middleware.mjs";
+import { verifyToken, verifyIfAdmin } from "../middlewares/auth.middleware.mjs";
 
 export function getRouter() {
   const router = new Router();
-  router.get("/products", verifyToken, verifyIfAdmin, getAllProducts)
-  router.post("/products", createNewProduct)
-  router.get("/products/:product_id", getOneProduct)
-  router.patch("/products/:product_id", updateOneProduct)
-  router.delete("/products/:product_id", deleteAProduct)
+  router.get("/products", verifyToken, getAllProducts);
+  router.post("/products", verifyToken, verifyIfAdmin, createNewProduct);
+  router.get("/products/:product_id", verifyToken, getOneProduct);
+  router.patch("/products/:product_id", verifyToken, verifyIfAdmin, updateOneProduct);
+  router.delete("/products/:product_id", verifyToken, verifyIfAdmin, deleteAProduct);
   return router;
-}
-
-function prueba(req, res) {
-  res.send("hola hola esto anda")
 }
 
 //CREATE NEW PRODUCT
 const createNewProduct = async (request, response) => {
-  // const newProduct = request.body;
-  // const product = await DB_MODELS.Product.create(newProduct);
-  // response.json(product);
   const newProductInfo = request.body;
   const product = await createProduct(newProductInfo);
   response.json(product);
 };
 
-//GET ALL PRODUCTS
+//GET ALL AVAILABLE PRODUCTS
 const getAllProducts = async (request, response) => {
-  const allProducts = await getProducts();
+  const allProducts = await getProducts({is_disabled: false});
   response.json(allProducts);
 }
 
@@ -46,9 +38,7 @@ const updateOneProduct = async (request, response) => {
   const updatedInfo = request.body;
   await updateProduct(updatedInfo, productId);
   const updatedProduct = await getProducts(productId)
-  //const data = updatedProduct;
   response.send(updatedProduct)
-  //response.send(`Producto actualizado: ${data}`)
 }
 
 //DELETE ONE PRODUCT
@@ -59,5 +49,5 @@ const deleteAProduct = async (request, response) => {
   console.log(productName);
   await deleteProduct(productId);
   response.send(productToDelete);
-  //response.send(`Product with id ${productId.id} and name ${productName} was deleted succesfully`)
+  //response.send(`Product with id ${productId} and name ${productName} was deleted succesfully`)
 }

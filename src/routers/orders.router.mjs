@@ -1,27 +1,26 @@
 import { Router } from "express";
-import jwt from 'jsonwebtoken';
 import Sequelize from "sequelize";
+import jwt from 'jsonwebtoken';
 import { getOrders, updateOrderStatus, createOrder } from "../config/db.mjs";
-import { verifyToken } from "../middlewares/auth.middleware.mjs";
+import { verifyToken, verifyIfAdmin } from "../middlewares/auth.middleware.mjs";
 const Op = Sequelize.Op;
 
 export function getRouter() {
   const router = new Router();
   router.get("/orders", verifyToken, getAllCurrentOrders);
-  router.post("/orders", createNewOrder);
+  router.post("/orders", verifyToken, createNewOrder);
   //router.get("/orders/:userId");
-  router.get("/orders/:order_id", getOrderById);
-  router.patch("/orders/:order_id", updateStatus);
+  router.get("/orders/:order_id", verifyToken, verifyIfAdmin, getOrderById);
+  router.patch("/orders/:order_id", verifyToken, verifyIfAdmin, updateStatus);
   return router;
 }
 
 
-//GET ALL ORDER, ver de agregar filtro de fecha de hoy
+//GET ALL CURRENT ORDERS
 const getAllCurrentOrders = async (request, response) => {
   const token = request.headers.authorization.replace("Bearer ", "");
   const tokenInfo = jwt.decode(token);
   try {
-    
     if (tokenInfo.is_admin === false) {
       const query = {
         user_id: tokenInfo.user_id,
@@ -34,7 +33,13 @@ const getAllCurrentOrders = async (request, response) => {
       const userOrders = await getOrders(query);
       response.json(userOrders)
     }else {
-      const allOrders = await getOrders();
+      const query = {
+        created_at: {
+          [Op.lt]: new Date(), //menor que ahora
+          [Op.gt]: new Date().setHours(0,0,0,0) //mayor que anoche a las 00
+        }
+      };
+      const allOrders = await getOrders(query);
       response.json(allOrders)
     }
   }catch (error) {
@@ -49,40 +54,45 @@ const getAllCurrentOrders = async (request, response) => {
 }
 
 
-
-//GET ONE ORDER BY ITS ID
+//GET ONE ORDER BY ITS ID, ONLY ADMIN. VER DE AGREGAR VALIDACIÓN PARA QUE SI NO ES ADMIN LA PUEDA VER SI LA ORDEN ES SUYA
 const getOrderById = async (request, response) => {
   const orderId = request.params;
-  const orders = await getOrders(orderId);
-  response.json(orders)
+  try {
+    const order = await getOrders(orderId);
+    if (order.length === 0){
+      response.send("No order with specified ID")
+    }
+    else {
+      response.json(order)
+    }
+  }catch (error){
+    console.log(error);
+  }
 }
-
-
-
-// //GET ALL ORDER, ver de agregar filtro de fecha de hoy
-// const getAllCurrentOrders = async (request, response) => {
-//   const orders = await getOrders();
-//   response.json(orders)
-// }
-
 
 
 //UPDATE ONE ORDER BY ITS ID
 const updateStatus = async (request, response) => {
   const newStatus = request.body.status;
   const orderId = request.params;
-  console.log(newStatus);
-  await updateOrderStatus(newStatus, orderId);
-  const updatedOrder = await getOrders(orderId);
-  response.json(updatedOrder);
-  //response.send(updatedOrder);
+  try {
+    const orderToUpdate = await getOrders(orderId);
+    if (orderToUpdate.length === 0 ){
+      response.send("No order with specified ID")
+    }else {
+      await updateOrderStatus(newStatus, orderId);
+      const updatedOrder = await getOrders(orderId);
+      response.json(updatedOrder);
+  }
+  }catch (error) {
+    console.log(error);
+  }
 }
 
 
 //CREATE NEW ORDER //CHEQUEAR ORDER DATE QUE DA ERROR POR CÓMO ESTÁ LA TABLA
-
 const createNewOrder = async (request, response) => {
   const newOrderInfo = request.body;
-  const order = await createOrder(newOrderInfo);
-  response.json(order);
+  const newOrder = await createOrder(newOrderInfo);
+  response.json(newOrder);
 };

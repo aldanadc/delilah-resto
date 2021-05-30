@@ -37,7 +37,7 @@ function main() {
 
   connect()
     .then(() => {
-      server.listen(ENV.SERVER_PORT, () => console.log(`Server is ready on port ${ENV.SERVER_PORT}`))
+      server.listen(ENV.SERVER_PORT || 3000, () => console.log(`Server is ready`))
     })
 };
 

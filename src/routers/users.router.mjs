@@ -1,19 +1,18 @@
 import { Router } from "express";
-import { getUsers, getFavs } from "../config/db.mjs";
+import jwt from 'jsonwebtoken';
+import { getUsers, getFavs, DB_MODELS, deleteUser, updateUser } from "../config/db.mjs";
+import { verifyToken, verifyIfAdmin } from "../middlewares/auth.middleware.mjs";
 
 export function getRouter() {
   const router = new Router();
-  router.get("/users", getAllUsers)
-  router.get("/users/:user_id", getOneUser)
-  router.patch("/users/:user_id") //??
-  router.delete("/users/:user_id") //??
-  router.get("/users/:user_id/favs", getUserFavs)
+  router.get("/users", verifyToken, verifyIfAdmin, getAllUsers);
+  router.get("/users/:user_id", verifyToken, getOneUser);
+  router.patch("/users/:user_id", verifyToken, modifyMyUser);
+  router.delete("/users/:user_id", verifyToken, deleteUserAccount);
+  router.get("/users/:user_id/favs", verifyToken, getUserFavs);
   return router;
 }
 
-function prueba(req, res) {
-  res.send("hola hola esto anda")
-}
 
 //READ ALL USERS
 const getAllUsers = async (request, response) => {
@@ -21,14 +20,208 @@ const getAllUsers = async (request, response) => {
   response.json(allUsers);
 }
 
-//READ ONE USER
+
 const getOneUser = async (request, response) => {
-  const user = await getUsers(request.params);
-  response.json(user)
+  const token = request.headers.authorization.replace("Bearer ", "");
+  const tokenInfo = jwt.decode(token);
+
+  try {
+    if ((tokenInfo.is_admin === false) && (request.params.user_id == tokenInfo.user_id)) {
+      const user = await getUsers({user_id: tokenInfo.user_id});
+      response.json(user);
+
+    }else if ((tokenInfo.is_admin === false) && (request.params != tokenInfo.user_id)) {
+      response
+      .status(403)
+      .json({
+        status: "Request failed",
+        message: "Admin credentials needed to access content"
+      })
+
+    }else if (tokenInfo.is_admin === true) {
+      const user = await getUsers(request.params);
+      if (user.length === 0){
+        response.send("No user with specified ID")
+      }else {
+        response.json(user);
+      }
+      
+    }else {
+      response
+      .status(403)
+      .json({
+        status: "Request failed",
+        message: "Credentials needed to access content"
+      })
+    }
+  }catch (error) {
+    console.log(error);
+    response
+      .status(403)
+      .json({
+        status: "Request failed",
+        message: "Credentials needed to access content"
+      })
+  }
 }
+
+
+
+
+
+//READ ONE USER
+// const getOneUser = async (request, response) => {
+//   const user = await getUsers(request.params);
+//   response.json(user)
+// }
 
 //READ USER'S FAVS
 const getUserFavs = async (request, response) => {
-  const favs = await getFavs(request.params);
-  response.json(favs)
+  const token = request.headers.authorization.replace("Bearer ", "");
+  const tokenInfo = jwt.decode(token);
+
+  try {
+    if ((tokenInfo.is_admin === false) && (request.params.user_id == tokenInfo.user_id)) {
+      const favs = await deleteUser({user_id: tokenInfo.user_id}); 
+      response.json(favs);
+
+    }else if ((tokenInfo.is_admin === false) && (request.params != tokenInfo.user_id)) {
+      response
+      .status(403)
+      .json({
+        status: "Request failed",
+        message: "Admin credentials needed to access content"
+      })
+
+    }else if (tokenInfo.is_admin === true) {
+      const favs = await getFavs(request.params);
+      if (favs.length === 0){
+        response
+          .status(404)
+          .json({
+            status: "Request failed",
+            message: "No user exists with specified ID"
+          })
+      }else {
+        response.json(favs);
+      }
+      
+    }else {
+      response
+      .status(403)
+      .json({
+        status: "Request failed",
+        message: "Credentials needed to access content"
+      })
+    }
+  }catch (error) {
+    console.log(error);
+    response
+      .status(403)
+      .json({
+        status: "Request failed",
+        message: "Credentials needed to access content"
+      })
+  }
+
+  //ASI ESTABA
+  // const favs = await getFavs(request.params); 
+  // response.json(favs);
+}
+
+
+const deleteUserAccount = async (request, response) => {
+  const token = request.headers.authorization.replace("Bearer ", "");
+  const tokenInfo = jwt.decode(token);
+
+  try {
+    if ((tokenInfo.is_admin === false) && (request.params.user_id == tokenInfo.user_id)) {
+      await deleteUser({user_id: tokenInfo.user_id}); 
+      response
+      .status(201)
+      .json({
+        status: "Request successfull",
+        message: "User deleted"});
+
+    }else if ((tokenInfo.is_admin === true)) {
+      await deleteUser(request.params); 
+      response
+      .status(201)
+      .json({
+        status: "Request successfull",
+        message: "User deleted"});
+    }else {
+      response
+      .status(403)
+      .json({
+        status: "Request failed",
+        message: "User is anauthorized to perform such action"
+      })
+
+    }
+  }catch (error) {
+    console.log(error);
+    response
+      .status(403)
+      .json({
+        status: "Request failed",
+        message: "Credentials needed to access content"
+      })
+  }
+
+  //ASI ESTABA
+  // const favs = await getFavs(request.params); 
+  // response.json(favs);
+}
+
+
+const modifyMyUser = async (request, response) => {
+  const token = request.headers.authorization.replace("Bearer ", "");
+  const tokenInfo = jwt.decode(token);
+
+  try {
+    if ((tokenInfo.is_admin === false) && (request.params.user_id == tokenInfo.user_id)) {
+      const userId = request.params;
+      const updatedInfo = request.body;
+      await updateUser(updatedInfo, userId);
+      //await updateUser({user_id: tokenInfo.user_id}); 
+      response
+      .status(201)
+      .json({
+        status: "Request successfull",
+        message: "User updated"});
+
+    } else if (tokenInfo.is_admin === true) {
+      const userId = request.params;
+      const updatedInfo = request.body;
+      await updateUser(updatedInfo, userId);
+
+      response
+      .status(201)
+      .json({
+        status: "Request successfull",
+        message: "User updated"});
+    
+    }else {
+      response
+      .status(403)
+      .json({
+        status: "Request failed",
+        message: "User is anauthorized to perform such action"
+      })
+
+    }
+  }catch (error) {
+    console.log(error);
+    response
+      .status(403)
+      .json({
+        status: "Request failed",
+        message: "Credentials needed to access content"
+      })
+  }
+
+  //ASI ESTABA
+  // const favs = await getFavs(request.params); 
+  // response.json(favs);
 }
