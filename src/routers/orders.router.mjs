@@ -9,7 +9,7 @@ export function getRouter() {
   const router = new Router();
   router.get("/orders", verifyToken, getAllCurrentOrders);
   router.post("/orders", verifyToken, createNewOrder);
-  router.get("/orders/:order_id", verifyToken, /*verifyIfAdmin*/ getOrderById);
+  router.get("/orders/:order_id", verifyToken, getOrderById);
   router.patch("/orders/:order_id", verifyToken, verifyIfAdmin, updateStatus);
   return router;
 }
@@ -25,7 +25,7 @@ const getAllCurrentOrders = async (request, response) => {
         user_id: tokenInfo.user_id,
         created_at: {
           [Op.lt]: new Date(), //menor que ahora
-          [Op.gt]: new Date().setHours(0,0,0,0) //mayor que anoche a las 00
+          [Op.gt]: new Date().setHours(0, 0, 0, 0) //mayor que anoche a las 00
         }
       };
       console.log(JSON.stringify(query, null, 2));
@@ -33,35 +33,35 @@ const getAllCurrentOrders = async (request, response) => {
 
       if (userOrders.length === 0) {
         response
-        .status(404)
-        .send({
-          status: "Nothing found",
-          message: "There are no active orders"
-        })
-      }else {
+          .status(404)
+          .send({
+            status: "Nothing found",
+            message: "There are no active orders"
+          })
+      } else {
         response.json(userOrders)
       }
-    }else {
+    } else {
       const query = {
         created_at: {
           [Op.lt]: new Date(), //menor que ahora
-          [Op.gt]: new Date().setHours(0,0,0,0) //mayor que anoche a las 00
+          [Op.gt]: new Date().setHours(0, 0, 0, 0) //mayor que anoche a las 00
         }
       };
       const allOrders = await getOrders(query);
 
       if (allOrders.length === 0) {
         response
-        .status(404)
-        .send({
-          status: "Nothing found",
-          message: "There are no active orders"
-        })
-      }else {
+          .status(404)
+          .send({
+            status: "Nothing found",
+            message: "There are no active orders"
+          })
+      } else {
         response.json(allOrders)
       }
     }
-  }catch (error) {
+  } catch (error) {
     console.log(error);
     response
       .status(500)
@@ -72,7 +72,7 @@ const getAllCurrentOrders = async (request, response) => {
   }
 }
 
-//GET ONE ORDER BY ITS ID, ONLY ADMIN. VER DE AGREGAR VALIDACIÓN PARA QUE SI NO ES ADMIN LA PUEDA VER SI LA ORDEN ES SUYA
+//GET ONE ORDER BY ITS ID, ONLY ADMIN OR USER WHO MADE THE ORDER
 const getOrderById = async (request, response) => {
   const token = request.headers.authorization.replace("Bearer ", "");
   const tokenInfo = jwt.decode(token);
@@ -80,8 +80,8 @@ const getOrderById = async (request, response) => {
 
   try {
     const order = await getOrders(orderId);
-
-    if (order.length === 0){
+    console.log(order[0].user_id);
+    if (order.length === 0) {
       response
         .status(404)
         .send({
@@ -89,13 +89,35 @@ const getOrderById = async (request, response) => {
           message: "No order with specified ID"
         })
 
-    }else if ((tokenInfo.is_admin === false) && (order[0].user_id === tokenInfo.user_id)) {
-      response.json(order)
+    } else {
 
-    }else if (tokenInfo.is_admin === true) {
-      response.json(order)
+      if ((tokenInfo.is_admin === false) && (order[0].user_id === tokenInfo.user_id)) {
+
+        response.json(order);
+
+      } else if ((tokenInfo.is_admin === false) && (order[0].user_id !== tokenInfo.user_id)) {
+
+        response
+          .status(403)
+          .json({
+            status: "Request failed",
+            message: "User is not authorized to perform such action"
+          })
+
+      } else if (tokenInfo.is_admin === true) {
+
+        if (order.length === 0) {
+          response
+            .status(404)
+            .send({
+              status: "Nothing found",
+              message: "No order with specified ID"
+            })
+        }
+      }
     }
-  }catch (error){
+
+  } catch (error) {
     console.log(error);
     response
       .status(500)
@@ -107,31 +129,32 @@ const getOrderById = async (request, response) => {
 }
 
 
-
 //UPDATE ONE ORDER BY ITS ID
 const updateStatus = async (request, response) => {
-  const newStatus = request.body.status;
+  const { status } = request.body;
   const orderId = request.params;
 
   try {
-    if (newStatus === undefined) {
+    if (!status) {
       response
         .status(400)
         .send({
           status: "Request failed",
           message: "Invalid information provided"
         });
-    }else {
+    } else {
       const orderToUpdate = await getOrders(orderId);
-      if (orderToUpdate.length === 0 ){
+
+      if (orderToUpdate.length === 0) {
         response
           .status(404)
           .send({
             status: "Nothing found",
             message: "No order with specified ID"
           });
-      }else {
-        await updateOrderStatus(newStatus, orderId);
+
+      } else {
+        await updateOrderStatus(status, orderId);
 
         response
           .status(200)
@@ -139,9 +162,9 @@ const updateStatus = async (request, response) => {
             status: "Request successfull",
             message: "Order status updated"
           });
+      }
     }
-  }
-  }catch (error) {
+  } catch (error) {
     console.log(error);
 
     if (error.original.code === "WARN_DATA_TRUNCATED") {
@@ -151,7 +174,7 @@ const updateStatus = async (request, response) => {
           status: "Request failed",
           message: "Invalid information provided"
         });
-    }else {
+    } else {
       response
         .status(500)
         .json({
@@ -179,11 +202,11 @@ const createNewOrder = async (request, response) => {
     const newOrder = await createOrder(newOrderInfo);
 
     response
-    .status(201)
-    .json(newOrder);
+      .status(201)
+      .json(newOrder);
 
-  }catch (error) {
-    
+  } catch (error) {
+
     console.log(error);
 
     if (error instanceof Sequelize.ValidationError) {
@@ -191,21 +214,21 @@ const createNewOrder = async (request, response) => {
         .status(400)
         .send({
           status: "Request failed",
-          message: "Invalid or incomplete information provided, please check entered fields"
+          message: "Incorrect or missing information, please check all required fields"
         });
 
-    }else if((error instanceof Sequelize.DatabaseError)) {
+    } else if ((error instanceof Sequelize.DatabaseError)) {
 
       if ((error.original.code === "WARN_DATA_TRUNCATED") || (error.original.code === "ER_TRUNCATED_WRONG_VALUE_FOR_FIELD")) {
         response
           .status(400)
           .send({
             status: "Request failed",
-            message: "Invalid or incomplete information provided, please check entered fields"
+            message: "Incorrect or missing information, please check all required fields"
           });
       }
 
-    }else {
+    } else {
       response
         .status(500)
         .json({

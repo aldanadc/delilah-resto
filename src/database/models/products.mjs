@@ -12,28 +12,52 @@ export function createModel(sequelize) {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        notEmpty: true
+        notEmpty: true,
+        notNumber(value) {
+          if (typeof value === "number") {
+            throw new Error("Product name cannot be a number");
+          }
+        },
+        notIn: [[true, false]]
       }
     },
     description: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        notEmpty: true
+        notEmpty: true,
+        notNumber(value) {
+          if (typeof value === "number") {
+            throw new Error("Product description cannot be a number");
+          }
+        },
+        notIn: [[true, false]]
       }
     },
     image: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        notEmpty: true
+        notEmpty: true,
+        notNumber(value) {
+          if (typeof value === "number") {
+            throw new Error("Product image cannot be a number");
+          }
+        },
+        notIn: [[true, false]]
       }
     },
     ingredients: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        notEmpty: true
+        notEmpty: true,
+        notNumber(value) {
+          if (typeof value === "number") {
+            throw new Error("Product ingredients cannot be a number");
+          }
+        },
+        notIn: [[true, false]]
       }
     },
     price: {
@@ -41,7 +65,7 @@ export function createModel(sequelize) {
       allowNull: false,
       validate: {
         isNumeric: true,
-        notEmpty: true
+        notEmpty: true,
       }
     },
     is_disabled: {
@@ -49,7 +73,8 @@ export function createModel(sequelize) {
       allowNull: false,
       defaultValue: false,
       validate: {
-        notEmpty: true
+        notEmpty: true,
+        isIn: [[true, false]]
       }
     },
   }, {

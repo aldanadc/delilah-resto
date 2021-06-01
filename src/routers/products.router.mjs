@@ -15,35 +15,40 @@ export function getRouter() {
 //CREATE NEW PRODUCT
 const createNewProduct = async (request, response) => {
   const newProductInfo = request.body;
+
   try {
     const product = await createProduct(newProductInfo);
     response
-    .status(201)
-    .json(product);
-  }catch (error) {
+      .status(201)
+      .json(product);
+
+  } catch (error) {
     console.log(error);
+
     if (error.name === "SequelizeValidationError") {
       response
-      .status(400)
-      .json({
-        status: "Request failed",
-        message: "Fields missing, please complete all required fields"
+        .status(400)
+        .json({
+          status: "Request failed",
+          message: "Incorrect or missing information, please check all required fields"
         })
-    }else {
-        console.log(error);
-        response
+
+    } else {
+      console.log(error);
+
+      response
         .status(500)
         .json({
           status: "Request failed",
-          message: "Could not complete action"
+          message: "Internal server error"
         })
-      } 
+    }
   }
 };
 
 //GET ALL AVAILABLE PRODUCTS
 const getAllProducts = async (request, response) => {
-  const allProducts = await getProducts({is_disabled: false});
+  const allProducts = await getProducts({ is_disabled: false });
   response.json(allProducts);
 }
 
@@ -53,17 +58,25 @@ const getOneProduct = async (request, response) => {
   try {
     const product = await getProducts(queryProduct);
 
-    if (product.length === 0 ){
+    if (product.length === 0) {
       response
-      .status(404)
-      .json({
-        status: "Not found",
-        message: "No product with specified ID"})
-    }else {
+        .status(404)
+        .json({
+          status: "Not found",
+          message: "No product with specified ID"
+        })
+    } else {
       response.json(product);
     }
-  }catch(error) {
+  } catch (error) {
     console.log(error);
+
+    response
+      .status(500)
+      .json({
+        status: "Request failed",
+        message: "Internal server error"
+      })
   }
 }
 
@@ -75,26 +88,35 @@ const updateOneProduct = async (request, response) => {
   try {
     if (!Object.keys(updatedInfo).length) {
       response
-      .status(400)
-      .json({
-        status: "Request failed",
-        message: "No update information provided"})
-    }else {
+        .status(400)
+        .json({
+          status: "Request failed",
+          message: "No update information provided"
+        })
+    } else {
       await updateProduct(updatedInfo, productId);
       const updatedProduct = await getProducts(productId)
 
-      if (updatedProduct.length === 0 ){
+      if (updatedProduct.length === 0) {
         response
-        .status(404)
-        .json({
-          status: "Not found",
-          message: "No product with specified ID"})
-      }else {
+          .status(404)
+          .json({
+            status: "Not found",
+            message: "No product with specified ID"
+          })
+      } else {
         response.json(updatedProduct);
       }
     }
-  }catch (error) {
+  } catch (error) {
     console.log(error);
+
+    response
+      .status(500)
+      .json({
+        status: "Request failed",
+        message: "Internal server error"
+      })
   }
 }
 
@@ -106,18 +128,28 @@ const deleteAProduct = async (request, response) => {
     const productToDelete = await getProducts(productId);
     const productName = productToDelete.name;
 
-    if (productToDelete.length === 0 ){
+    if (productToDelete.length === 0) {
       response
-      .status(404)
-      .json({
-        status: "Not found",
-        message: "No product with specified ID"})
-    }else {
+        .status(404)
+        .json({
+          status: "Not found",
+          message: "No product with specified ID"
+        })
+    } else {
       await deleteProduct(productId);
       response.send(productToDelete);
-    }  
-  
-  //response.send(`Product with id ${productId} and name ${productName} was deleted succesfully`)
-  }catch (error) {
-    console.log(error);}
+    }
+
+    //response.send(`Product with id ${productId} and name ${productName} was deleted succesfully`)
+  } catch (error) {
+
+    console.log(error);
+
+    response
+      .status(500)
+      .json({
+        status: "Request failed",
+        message: "Internal server error"
+      })
+  }
 }

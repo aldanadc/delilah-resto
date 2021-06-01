@@ -13,14 +13,26 @@ export function createModel(sequelize) {
       allowNull: false,
       unique: true,
       validate: {
-        notEmpty: true
+        notEmpty: true,
+        notNumber(value) {
+          if (typeof value === "number") {
+            throw new Error("Username cannot be a number");
+          }
+        },
+        notIn: [[true, false]]
       }
     },
     full_name: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        notEmpty: true
+        notEmpty: true,
+        notNumber(value) {
+          if (typeof value === "number") {
+            throw new Error("Full name cannot be a number");
+          }
+        },
+        notIn: [[true, false]]
       }
     },
     email: {
@@ -35,21 +47,29 @@ export function createModel(sequelize) {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        notEmpty: true
+        notEmpty: true,
+        notIn: [[true, false]]
       }
     },
     address: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        notEmpty: true
+        notEmpty: true,
+        notNumber(value) {
+          if (typeof value === "number") {
+            throw new Error("Address cannot be a number");
+          }
+        },
+        notIn: [[true, false]]
       }
     },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        notEmpty: true
+        notEmpty: true,
+        notIn: [[true, false]]
       }
     },
     is_admin: {
@@ -57,7 +77,8 @@ export function createModel(sequelize) {
       allowNull: true,
       defaultValue: false,
       validate: {
-        notEmpty: true
+        notEmpty: true,
+        isIn: [[true, false]]
       }
     },
   }, {

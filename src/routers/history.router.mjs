@@ -18,13 +18,13 @@ const getHistory = async (request, response) => {
   const tokenInfo = jwt.decode(token);
   try {
     if (tokenInfo.is_admin === false) {
-      const userHistory = await getOrders({user_id: tokenInfo.user_id});
+      const userHistory = await getOrders({ user_id: tokenInfo.user_id });
       response.json(userHistory)
-    }else { //GET ALL ORDERS FROM THE BEGINNING OF TIME
+    } else { //GET ALL ORDERS FROM THE BEGINNING OF TIME
       const completeHistory = await getOrders();
       response.json(completeHistory)
     }
-  }catch (error) {
+  } catch (error) {
     response
       .status(403)
       .json({
@@ -47,11 +47,11 @@ const getUserHistory = async (request, response) => {
           status: "Nothing found",
           message: "There are no orders for this user or user does not exist"
         })
-    }else {
+    } else {
       response.json(userOrders)
     }
-    
-  }catch (error) {
+
+  } catch (error) {
     console.log(error);
     response
       .status(500)
@@ -68,7 +68,7 @@ const getHistoryByDate = async (request, response) => {
   const date = new Date(request.params.date);
   const endOfDay = new Date(date);
   endOfDay.setHours(endOfDay.getHours() + 24);
-  
+
   console.log(date);
   console.log(endOfDay);
 
@@ -77,12 +77,12 @@ const getHistoryByDate = async (request, response) => {
 
   if (dateTime !== dateCheck) {
     response
-    .status(400)
-    .json({
-      status: "Failed request",
-      message: "Invalid date provided"
-    })
-  }else {
+      .status(400)
+      .json({
+        status: "Failed request",
+        message: "Invalid date provided"
+      })
+  } else {
     try {
       const dateHistory = await getOrders({
         created_at: {
@@ -93,16 +93,23 @@ const getHistoryByDate = async (request, response) => {
 
       if (dateHistory.length === 0) {
         response
-        .status(404)
-        .json({
-          status: "Nothing found",
-          message: "No orders on the specified date"
-        })
-      }else {
+          .status(404)
+          .json({
+            status: "Nothing found",
+            message: "No orders on the specified date"
+          })
+      } else {
         response.json(dateHistory)
       }
-    }catch (error) {
+    } catch (error) {
       console.log(error);
+
+      response
+        .status(500)
+        .json({
+          status: "Request failed",
+          message: "Internal server error"
+        })
     }
   }
 }
