@@ -19,16 +19,23 @@ export function getRouter() {
 const getAllCurrentOrders = async (request, response) => {
   const token = request.headers.authorization.replace("Bearer ", "");
   const tokenInfo = jwt.decode(token);
+  const lala = new Date();
+
+  console.log(lala);
+
+  const query = {
+    created_at: {
+      [Op.lt]: new Date(), //menor que ahora
+      [Op.gt]: new Date().setHours(0, 0, 0, 0) //mayor que anoche a las 00
+    }
+  };
+
+
   try {
     if (tokenInfo.is_admin === false) {
-      const query = {
-        user_id: tokenInfo.user_id,
-        created_at: {
-          [Op.lt]: new Date(), //menor que ahora
-          [Op.gt]: new Date().setHours(0, 0, 0, 0) //mayor que anoche a las 00
-        }
-      };
-      console.log(JSON.stringify(query, null, 2));
+
+      query.user_id = tokenInfo.user_id;
+
       const userOrders = await getOrders(query);
 
       if (userOrders.length === 0) {
@@ -42,12 +49,7 @@ const getAllCurrentOrders = async (request, response) => {
         response.json(userOrders)
       }
     } else {
-      const query = {
-        created_at: {
-          [Op.lt]: new Date(), //menor que ahora
-          [Op.gt]: new Date().setHours(0, 0, 0, 0) //mayor que anoche a las 00
-        }
-      };
+
       const allOrders = await getOrders(query);
 
       if (allOrders.length === 0) {
@@ -80,7 +82,7 @@ const getOrderById = async (request, response) => {
 
   try {
     const order = await getOrders(orderId);
-    console.log(order[0].user_id);
+
     if (order.length === 0) {
       response
         .status(404)
@@ -113,6 +115,8 @@ const getOrderById = async (request, response) => {
               status: "Nothing found",
               message: "No order with specified ID"
             })
+        }else {
+          response.json(order);
         }
       }
     }

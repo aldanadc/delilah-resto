@@ -3,24 +3,25 @@ import jwt from 'jsonwebtoken';
 import Sequelize from "sequelize";
 import { getOrders } from "../config/db.mjs";
 import { verifyToken, verifyIfAdmin } from "../middlewares/auth.middleware.mjs";
+import { checkIfValidDate } from "../middlewares/history.middleware.mjs";
 const Op = Sequelize.Op;
 
 export function getRouter() {
   const router = new Router();
   router.get("/history", verifyToken, getHistory);
   router.get("/history/user/:user_id", verifyToken, verifyIfAdmin, getUserHistory);
-  router.get("/history/:date", verifyToken, verifyIfAdmin, getHistoryByDate);
+  router.get("/history/:date", verifyToken, verifyIfAdmin, checkIfValidDate, getHistoryByDate);
   return router;
 }
 
 const getHistory = async (request, response) => {
   const token = request.headers.authorization.replace("Bearer ", "");
   const tokenInfo = jwt.decode(token);
-  try {
+  try { //IF NON-ADMIN, GET USER'S HISTORY
     if (tokenInfo.is_admin === false) {
       const userHistory = await getOrders({ user_id: tokenInfo.user_id });
       response.json(userHistory)
-    } else { //GET ALL ORDERS FROM THE BEGINNING OF TIME
+    } else { //IF ADMIN, GET ALL ORDERS FROM THE BEGINNING OF TIME
       const completeHistory = await getOrders();
       response.json(completeHistory)
     }
@@ -35,7 +36,7 @@ const getHistory = async (request, response) => {
 }
 
 
-//GET ONE USER'S ORDERS, ONLY ADMIN
+//GET ONE USER'S HISTORY, ONLY ADMIN
 const getUserHistory = async (request, response) => {
   try {
     const userOrders = await getOrders(request.params);
@@ -63,26 +64,26 @@ const getUserHistory = async (request, response) => {
 }
 
 
-//GET ORDERS BY DATE, ONLY ADMIN
+//GET ORDERS BY SPECIFIED DATE, ONLY ADMIN
 const getHistoryByDate = async (request, response) => {
   const date = new Date(request.params.date);
   const endOfDay = new Date(date);
   endOfDay.setHours(endOfDay.getHours() + 24);
 
-  console.log(date);
-  console.log(endOfDay);
+  // console.log(date);
+  // console.log(endOfDay);
 
-  const dateTime = date.getTime();
-  const dateCheck = date.getTime();
+  // const dateTime = date.getTime();
+  // const dateCheck = date.getTime();
 
-  if (dateTime !== dateCheck) {
-    response
-      .status(400)
-      .json({
-        status: "Failed request",
-        message: "Invalid date provided"
-      })
-  } else {
+  // if (dateTime !== dateCheck) {
+  //   response
+  //     .status(400)
+  //     .json({
+  //       status: "Failed request",
+  //       message: "Invalid date provided"
+  //     })
+  // } else {
     try {
       const dateHistory = await getOrders({
         created_at: {
@@ -112,4 +113,6 @@ const getHistoryByDate = async (request, response) => {
         })
     }
   }
-}
+//}
+
+

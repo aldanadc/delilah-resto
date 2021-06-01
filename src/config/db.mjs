@@ -12,7 +12,6 @@ export default async function connect() {
     host: ENV.DB_HOST,
     port: ENV.DB_PORT,
     dialect: 'mariadb'
-    //dialect: ENV.DB_CONNECTOR
   });
   try {
     await sequelize.authenticate();
@@ -93,6 +92,7 @@ export async function updateProduct(updatedInfo, filter = {}) {
   return product
 }
 
+
 //USERS
 export async function createUser(userInfo) {
   /** @type {Sequelize.Model} */
@@ -110,7 +110,6 @@ export async function deleteUser(filter = {}) {
     
   return deletedUser
 }
-
 
 export async function updateUser(updatedInfo, filter = {}) {
   /** @type {Sequelize.Model} */
@@ -133,6 +132,7 @@ export async function getUsers(filter = {}) {
   return user
 }
 
+
 //FAVS
 export async function getFavs(filter = {}) {
   /** @type {Sequelize.Model} */
@@ -151,18 +151,6 @@ export async function getFavs(filter = {}) {
   
   return userFavs
 }
-
-//VERSIÓN QUE SOLO TRAE USER Y PRODUCT ID
-// export async function getFavs(filter = {}) {
-//   /** @type {Sequelize.Model} */
-//   const Favs = DB_MODELS.Products_Users;
-//   const userFavs = Favs.findAll({
-//     where: filter,
-//     attributes: { exclude: ['id', 'created_at', 'updated_at']},
-//   });
-
-//   return userFavs
-// }
 
 
 //ORDERS
@@ -219,27 +207,6 @@ export async function createOrder(orderInfo) {
 
 
 
-
-
-
-
-//ESTÁ SIN USAR, PRUEBA
-// async function pepe(item) {
-//   const Order = DB_MODELS.Order;
-//   const newOrderTwo = await Order.findOne({
-//   where: {order_id: item},
-//   attributes: { exclude: ['updated_at']},
-//   include: [{//FUNCIONA CUANDO QUIERE, LA MAYORÍA DE LAS VECES NO TRAE LOS PRODUCTOS, SOLO ARRAY VACÍO
-//     model: DB_MODELS.Product, as: "Order items",
-//     attributes: { exclude: ['created_at', 'updated_at', 'description', 'ingredients', 'is_disabled']},
-//     through: {
-//       attributes: [/*'product_id',*/ 'product_qty']
-//     }
-//   }]
-// })
-//   console.log(newOrderTwo);
-//   return newOrderTwo
-// }
 
 
 
