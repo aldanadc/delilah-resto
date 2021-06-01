@@ -5,7 +5,6 @@ import { createModel as createProductsModel } from '../database/models/products.
 import { createModel as createOrdersModel } from '../database/models/orders.mjs';
 import { createModel as createOrders_ProductsModel } from '../database/models/orders_products.mjs';
 import { createModel as createProducts_Users } from '../database/models/products_users.mjs';
-
 export const DB_MODELS = {};
 
 export default async function connect() {
@@ -27,12 +26,14 @@ export default async function connect() {
 
     DB_MODELS.User.hasMany(DB_MODELS.Order, { foreignKey: "user_id" });
     DB_MODELS.Order.belongsTo(DB_MODELS.User, { foreignKey: "user_id" });
-    DB_MODELS.Product.belongsToMany(DB_MODELS.Order, { through: 'orders_products', foreignKey: "product_id" });
-    DB_MODELS.Order.belongsToMany(DB_MODELS.Product, { through: 'orders_products', foreignKey: "order_id" });
-    DB_MODELS.User.belongsToMany(DB_MODELS.Product, { as: "Favourites" ,through: 'products_users', foreignKey: "user_id" });
-    DB_MODELS.Product.belongsToMany(DB_MODELS.User, { as: "Favourites", through: 'products_users', foreignKey: "product_id" });
-
-
+    DB_MODELS.Product.belongsToMany(DB_MODELS.Order, { as: "Order items", through: DB_MODELS.Orders_Products, foreignKey: "product_id" });
+    DB_MODELS.Order.belongsToMany(DB_MODELS.Product, { as: "Order items", through: DB_MODELS.Orders_Products, foreignKey: "order_id" });
+    DB_MODELS.User.belongsToMany(DB_MODELS.Product, { as: "Favourites" ,through: DB_MODELS.Products_Users, foreignKey: "user_id" });
+    DB_MODELS.Product.belongsToMany(DB_MODELS.User, { as: "Favourites", through: DB_MODELS.Products_Users, foreignKey: "product_id" });
+    DB_MODELS.Product.hasMany(DB_MODELS.Orders_Products, {foreignKey: "product_id"});
+    DB_MODELS.Orders_Products.belongsTo(DB_MODELS.Product, {foreignKey: "product_id"});
+    DB_MODELS.Order.hasMany(DB_MODELS.Orders_Products, {foreignKey: "order_id"});
+    DB_MODELS.Orders_Products.belongsTo(DB_MODELS.Order, {foreignKey: "order_id"});
 
   await sequelize.sync({ force: false })
   }catch (error) {
@@ -171,8 +172,8 @@ export async function getOrders(filter = {}) {
   const order =  Order.findAll({
     where: filter,
     include: [{
-      model: DB_MODELS.Product,
-      attributes: { exclude: ['created_at', 'updated_at', 'description', /*'ingredients',*/ 'is_disabled']},
+      model: DB_MODELS.Product, as: "Order items",
+      attributes: { exclude: ['created_at', 'updated_at', 'description', 'ingredients', 'is_disabled']},      
       through: {
         attributes: [/*'product_id',*/ 'product_qty']
       }
@@ -198,61 +199,66 @@ export async function updateOrderStatus(updatedStatus, filter = {}) {
 export async function createOrder(orderInfo) {
   /** @type {Sequelize.Model} */
   const Order = DB_MODELS.Order;
-  const newOrder = await Order.create(orderInfo);
-  const newOrderId = newOrder.order_id;
-  await addProductsToOrder(orderInfo.order_products/*array*/, newOrderId);
-  //const foundOrder = await pepe(newOrderId);
-  const foundOrder = await Order.findOne({
-    where: {order_id: newOrderId},
-    attributes: { exclude: ['updated_at']},
-    // include: [{ //FUNCIONA CUANDO QUIERE, LA MAYORÍA DE LAS VECES NO TRAE LOS PRODUCTOS, SOLO ARRAY VACÍO
-    //   model: DB_MODELS.Product,
-    //   attributes: { exclude: ['created_at', 'updated_at', 'description', 'ingredients', 'is_disabled']},
-    //   through: {
-    //     attributes: [/*'product_id',*/ 'product_qty']
-    //   }
-    // }]
-  });
-  return foundOrder;
+  const newOrder = await Order.create(
+    orderInfo,
+    {
+      attributes: { exclude: 'updated_at'}, //ESTO NO FUNCIONA
+      include: [DB_MODELS.Orders_Products]
+    }
+  );
+
+  return newOrder;
 }
 
-async function pepe(item) {
-  const Order = DB_MODELS.Order;
-  const newOrderTwo = await Order.findOne({
-  where: {order_id: item},
-  attributes: { exclude: ['updated_at']},
-  include: [{//FUNCIONA CUANDO QUIERE, LA MAYORÍA DE LAS VECES NO TRAE LOS PRODUCTOS, SOLO ARRAY VACÍO
-    model: DB_MODELS.Product,
-    attributes: { exclude: ['created_at', 'updated_at', 'description', 'ingredients', 'is_disabled']},
-    through: {
-      attributes: [/*'product_id',*/ 'product_qty']
-    }
-  }]
-})
-  console.log(newOrderTwo);
-  return newOrderTwo
-}
+
+
+
+
+
+
+
+
+
+
+
+//ESTÁ SIN USAR, PRUEBA
+// async function pepe(item) {
+//   const Order = DB_MODELS.Order;
+//   const newOrderTwo = await Order.findOne({
+//   where: {order_id: item},
+//   attributes: { exclude: ['updated_at']},
+//   include: [{//FUNCIONA CUANDO QUIERE, LA MAYORÍA DE LAS VECES NO TRAE LOS PRODUCTOS, SOLO ARRAY VACÍO
+//     model: DB_MODELS.Product, as: "Order items",
+//     attributes: { exclude: ['created_at', 'updated_at', 'description', 'ingredients', 'is_disabled']},
+//     through: {
+//       attributes: [/*'product_id',*/ 'product_qty']
+//     }
+//   }]
+// })
+//   console.log(newOrderTwo);
+//   return newOrderTwo
+// }
 
 
 
 
 //CREATE ORDER PRODUCTS
-export async function addProductsToOrder(productsInfo/*array*/, orderId) {
-  /** @type {Sequelize.Model} */
+// export async function addProductsToOrder(productsInfo/*array*/, orderId) {
+//   /** @type {Sequelize.Model} */
   
-  productsInfo.forEach(item => {
-    item.order_id = orderId;
-  });
+//   productsInfo.forEach(item => {
+//     item.order_id = orderId;
+//   });
 
-  productsInfo.forEach(addItemToOrder);
-}
+//   productsInfo.forEach(addItemToOrder);
+// }
 
-async function addItemToOrder(item) {
-  const Items = DB_MODELS.Orders_Products;
-  console.log(item); //ACÁ DA ERROR SI SE AGREGA EL MISMO PRODUCTO MÁS DE UNA VEZ
-  const orderItem = await Items.create(item);
-  return orderItem
-}
+// async function addItemToOrder(item) {
+//   const Items = DB_MODELS.Orders_Products;
+//   console.log(item); //ACÁ DA ERROR SI SE AGREGA EL MISMO PRODUCTO MÁS DE UNA VEZ
+//   const orderItem = await Items.create(item);
+//   return orderItem
+// }
 
 
 //así estaba

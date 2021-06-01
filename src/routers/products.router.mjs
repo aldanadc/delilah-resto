@@ -15,8 +15,29 @@ export function getRouter() {
 //CREATE NEW PRODUCT
 const createNewProduct = async (request, response) => {
   const newProductInfo = request.body;
-  const product = await createProduct(newProductInfo);
-  response.json(product);
+  try {
+    const product = await createProduct(newProductInfo);
+    response
+    .status(201)
+    .json(product);
+  }catch (error) {
+    if (error.name === "SequelizeValidationError") {
+      response
+      .status(400)
+      .json({
+        status: "Request failed",
+        message: "Fields missing, please complete all required fields"
+        })
+    }else {
+        console.log(error);
+        response
+        .status(500)
+        .json({
+          status: "Request failed",
+          message: "Could not complete action"
+        })
+      } 
+  }
 };
 
 //GET ALL AVAILABLE PRODUCTS
@@ -28,26 +49,74 @@ const getAllProducts = async (request, response) => {
 //GET ONE PRODUCT
 const getOneProduct = async (request, response) => {
   const queryProduct = request.params;
-  const product = await getProducts(queryProduct);
-  response.json(product);
+  try {
+    const product = await getProducts(queryProduct);
+
+    if (product.length === 0 ){
+      response
+      .status(404)
+      .json({
+        status: "Not found",
+        message: "No product with specified ID"})
+    }else {
+      response.json(product);
+    }
+  }catch(error) {
+    console.log(error);
+  }
 }
 
 //UPDATE ONE PRODUCT
 const updateOneProduct = async (request, response) => {
   const productId = request.params;
   const updatedInfo = request.body;
-  await updateProduct(updatedInfo, productId);
-  const updatedProduct = await getProducts(productId)
-  response.send(updatedProduct)
+
+  try {
+    if (!Object.keys(updatedInfo).length) {
+      response
+      .status(400)
+      .json({
+        status: "Request failed",
+        message: "No update information provided"})
+    }else {
+      await updateProduct(updatedInfo, productId);
+      const updatedProduct = await getProducts(productId)
+
+      if (updatedProduct.length === 0 ){
+        response
+        .status(404)
+        .json({
+          status: "Not found",
+          message: "No product with specified ID"})
+      }else {
+        response.json(updatedProduct);
+      }
+    }
+  }catch (error) {
+    console.log(error);
+  }
 }
 
 //DELETE ONE PRODUCT
 const deleteAProduct = async (request, response) => {
   const productId = request.params;
-  const productToDelete = await getProducts(productId);
-  const productName = productToDelete.name;
-  console.log(productName);
-  await deleteProduct(productId);
-  response.send(productToDelete);
+
+  try {
+    const productToDelete = await getProducts(productId);
+    const productName = productToDelete.name;
+
+    if (productToDelete.length === 0 ){
+      response
+      .status(404)
+      .json({
+        status: "Not found",
+        message: "No product with specified ID"})
+    }else {
+      await deleteProduct(productId);
+      response.send(productToDelete);
+    }  
+  
   //response.send(`Product with id ${productId} and name ${productName} was deleted succesfully`)
+  }catch (error) {
+    console.log(error);}
 }

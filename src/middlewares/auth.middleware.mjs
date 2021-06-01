@@ -22,7 +22,7 @@ export async function authenticateUser(request, response, next) {
     next();
   }else {
     response
-    .status(403)
+    .status(401)
     .json({
       status: "Request failed",
       message: "Invalid login information"
@@ -40,21 +40,21 @@ export async function verifyToken(request, response, next) {
   }catch (error) {
     if (error.name === "TokenExpiredError") {
       response
-      .status(403)
+      .status(401)
       .json({
         status: "Request failed",
         message: "Expired user token, please log in again"
       })
     }else if (request.headers.authorization === undefined) {
       response
-        .status(403)
+        .status(401)
         .json({
           status: "Request failed",
           message: "Credentials needed to access content"
         })
     }else {
       response
-        .status(403)
+        .status(401)
         .json({
           status: "Request failed",
           message: "Invalid user token"

@@ -16,8 +16,12 @@ export function getRouter() {
 
 //READ ALL USERS
 const getAllUsers = async (request, response) => {
-  const allUsers = await getUsers();
-  response.json(allUsers);
+  try {
+    const allUsers = await getUsers();
+    response.json(allUsers);
+  }catch (error) {
+    console.log(error);
+    }
 }
 
 
@@ -41,7 +45,11 @@ const getOneUser = async (request, response) => {
     }else if (tokenInfo.is_admin === true) {
       const user = await getUsers(request.params);
       if (user.length === 0){
-        response.send("No user with specified ID")
+        response
+        .status(404)
+        .json({
+          status: "Request failed",
+          message: "No user with specified ID"})
       }else {
         response.json(user);
       }
@@ -64,9 +72,6 @@ const getOneUser = async (request, response) => {
       })
   }
 }
-
-
-
 
 
 //READ ONE USER
@@ -123,10 +128,6 @@ const getUserFavs = async (request, response) => {
         message: "Credentials needed to access content"
       })
   }
-
-  //ASI ESTABA
-  // const favs = await getFavs(request.params); 
-  // response.json(favs);
 }
 
 
@@ -142,36 +143,30 @@ const deleteUserAccount = async (request, response) => {
       .json({
         status: "Request successfull",
         message: "User deleted"});
-
-    }else if ((tokenInfo.is_admin === true)) {
-      await deleteUser(request.params); 
+    }else if (request.params.user_id !== tokenInfo.user_id) {
       response
-      .status(201)
+      .status(403)
       .json({
-        status: "Request successfull",
-        message: "User deleted"});
+        status: "Request failed",
+        message: "User is not authorized to perform such action"
+      })
     }else {
       response
       .status(403)
       .json({
         status: "Request failed",
-        message: "User is anauthorized to perform such action"
+        message: "Credentials needed to access content"
       })
-
     }
   }catch (error) {
     console.log(error);
     response
-      .status(403)
+      .status(500)
       .json({
         status: "Request failed",
-        message: "Credentials needed to access content"
+        message: "Internal server error"
       })
   }
-
-  //ASI ESTABA
-  // const favs = await getFavs(request.params); 
-  // response.json(favs);
 }
 
 
@@ -191,37 +186,21 @@ const modifyMyUser = async (request, response) => {
         status: "Request successfull",
         message: "User updated"});
 
-    } else if (tokenInfo.is_admin === true) {
-      const userId = request.params;
-      const updatedInfo = request.body;
-      await updateUser(updatedInfo, userId);
-
-      response
-      .status(201)
-      .json({
-        status: "Request successfull",
-        message: "User updated"});
-    
-    }else {
+    }else if (request.params.user_id !== tokenInfo.user_id) {
       response
       .status(403)
       .json({
         status: "Request failed",
-        message: "User is anauthorized to perform such action"
+        message: "User is not authorized to perform such action"
       })
-
     }
   }catch (error) {
     console.log(error);
     response
-      .status(403)
+      .status(500)
       .json({
         status: "Request failed",
-        message: "Credentials needed to access content"
+        message: "Internal server error"
       })
   }
-
-  //ASI ESTABA
-  // const favs = await getFavs(request.params); 
-  // response.json(favs);
 }

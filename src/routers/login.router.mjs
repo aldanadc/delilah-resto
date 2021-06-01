@@ -17,7 +17,7 @@ export function getRouter() {
 
 function userIsLoggedIn(request, response) {
   response
-    .status(202)
+    .status(200)
     .send({
       token: request.user.token
     });

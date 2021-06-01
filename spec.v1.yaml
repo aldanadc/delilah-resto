@@ -23,9 +23,7 @@ paths:
         "200":
           $ref: "#/components/responses/200Success"
         "401":
-          $ref: "#/components/responses/401Unauthorized"
-        "429":
-          description: "Demasiados intentos de acceso en el tiempo estipulado"
+          $ref: "#/components/responses/401NotAuthenticated"
 
   /register:
     post:
@@ -35,7 +33,7 @@ paths:
         description: "Información del nuevo usuario"
         required: true
         content:
-          application/x-www-form-urlencoded:
+          application/json:
             schema:
               $ref: "#/components/schemas/User"
             example:
@@ -45,6 +43,8 @@ paths:
           $ref: "#/components/responses/201Created"
         "400":
           $ref: "#/components/responses/400BadRequest"
+        "500":
+          $ref: "#/components/responses/500DefaultError"
 
   /products:
     get:
@@ -58,8 +58,10 @@ paths:
                 $ref: "#/components/schemas/Products"
               example:
                 $ref: "#/components/examples/Products"
+        "401": 
+          $ref: "#/components/responses/401NotAuthenticated"
         "500":
-          $ref: "#/components/responses/500defaultError"
+          $ref: "#/components/responses/500DefaultError"
     post:
       summary: "Crear un nuevo producto y añadirlo al menú"
       description: "Permite crear un nuevo producto de acuerdo a la estructura establecida y añadirlo al menú"
@@ -81,12 +83,14 @@ paths:
         "400":
           $ref: "#/components/responses/400BadRequest"
         "401": 
-          $ref: "#/components/responses/401Unauthorized"
+          $ref: "#/components/responses/401NotAuthenticated"
+        "403": 
+          $ref: "#/components/responses/403NotAdmin"
 
-  /products/{productId}:
+  /products/{product_id}:
     parameters:
         - in: path
-          name: productId
+          name: product_id
           required: true
           schema:
             type: string
@@ -101,10 +105,12 @@ paths:
                 $ref: "#/components/schemas/Product"
               example:  
                 $ref: "#/components/examples/Product"
+        "401": 
+          $ref: "#/components/responses/401NotAuthenticated"
         "404":
           $ref: "#/components/responses/404NotFound"
         "500":
-          $ref: "#/components/responses/500defaultError"
+          $ref: "#/components/responses/500DefaultError"
     patch:
       summary: "Actualizar un producto existente"
       description: "Permite actualizar parcialmente la información del producto especificado de acuerdo a la estructura establecida"
@@ -126,7 +132,11 @@ paths:
         "400":
           $ref: "#/components/responses/400BadRequest"
         "401": 
-          $ref: "#/components/responses/401Unauthorized"
+          $ref: "#/components/responses/401NotAuthenticated"
+        "403": 
+          $ref: "#/components/responses/403NotAdmin"
+        "404":
+          $ref: "#/components/responses/404NotFound"
     delete:
       summary: "Borrar un producto existente"
       description: "Permite borrar un producto existente en la base de datos"
@@ -134,9 +144,13 @@ paths:
         "204":
           description: "Producto borrado exitosamente"
         "401": 
-          $ref: "#/components/responses/401Unauthorized"
+          $ref: "#/components/responses/401NotAuthenticated"
+        "403": 
+          $ref: "#/components/responses/403NotAdmin"
+        "404":
+          $ref: "#/components/responses/404NotFound"
         "500":
-          $ref: "#/components/responses/500defaultError"
+          $ref: "#/components/responses/500DefaultError"
 
   /users:
     get:
@@ -150,20 +164,22 @@ paths:
               schema:
                 $ref: "#/components/schemas/Users"
         "401": 
-          $ref: "#/components/responses/401Unauthorized"
+          $ref: "#/components/responses/401NotAuthenticated"
+        "403": 
+          $ref: "#/components/responses/403NotAdmin"
         "500":
-          $ref: "#/components/responses/500defaultError"
+          $ref: "#/components/responses/500DefaultError"
 
-  /users/{userId}:
+  /users/{user_id}:
     parameters:
         - in: path
-          name: userId
+          name: user_id
           required: true
           schema:
             type: string
     get:
       summary: "Retorna información sobre un usuario"
-      description: "Retorna un objeto con información del usuario especificado"
+      description: "Retorna una lista con un objeto de usuario conteniendo información del usuario especificado. Un usuario logueado no admin solo podrá acceder a su propia información"
       responses:
         "200": 
           $ref: "#/components/responses/200Success"
@@ -174,14 +190,16 @@ paths:
               example:
                 $ref: "#/components/examples/User"
         "401": 
-          $ref: "#/components/responses/401Unauthorized"
+          $ref: "#/components/responses/401NotAuthenticated"
+        "403": 
+          $ref: "#/components/responses/403NotAdmin"
         "404":
           $ref: "#/components/responses/404NotFound"
         "500":
-          $ref: "#/components/responses/500defaultError"
+          $ref: "#/components/responses/500DefaultError"
     patch:
         summary: "Actualizar información de un usuario existente"
-        description: "Permite actualizar parcialmente la información del usuario especificado de acuerdo a la estructura establecida"
+        description: "Permite a un usuario actualizar su propia información de acuerdo a la estructura establecida"
         requestBody:
           description: "Información actualizada del usuario"
           required: true
@@ -196,25 +214,31 @@ paths:
           "400":
             $ref: "#/components/responses/400BadRequest"
           "401": 
-            $ref: "#/components/responses/401Unauthorized"
+            $ref: "#/components/responses/401NotAuthenticated"
+          "403": 
+            $ref: "#/components/responses/403NotAdmin"
+          "500":
+            $ref: "#/components/responses/500DefaultError"
     delete:
       summary: "Borrar un usuario existente"
-      description: "Permite a cada usuario borrar su registro en la base de datos"
+      description: "Permite a cada usuario borrar su propio registro en la base de datos"
       responses:
         "204":
           description: "Usuario borrado exitosamente"
         "401": 
-          $ref: "#/components/responses/401Unauthorized"
+          $ref: "#/components/responses/401NotAuthenticated"
+        "403": 
+          $ref: "#/components/responses/403NotAdmin"
         "500":
-          $ref: "#/components/responses/500defaultError"
+          $ref: "#/components/responses/500DefaultError"
 
-  /users/{userId}/favs:
+  /users/{user_id}/favs:
     get:
-      summary: "Retorna información sobre los productos favoritos de un usuario"
-      description: "Devuelve una lista de productos predilectos del usuario, basada en sus pedidos anteriores y de acuerdo a su ID"
+      summary: "Retorna información sobre los productos favoritos de un usuario."
+      description: "Devuelve una lista con un objeto conteniendo el id del usuario, su nombre de usuario y una lista de objetos de productos favoritos asociados al usuario. Solo el usuario en cuestión y un administrador pueden acceder a la información."
       parameters:
         - in: path
-          name: userId
+          name: user_id
           required: true
           schema:
             type: string
@@ -228,16 +252,18 @@ paths:
               example:  
                 $ref: "#/components/examples/Products"
         "401": 
-          $ref: "#/components/responses/401Unauthorized"
+          $ref: "#/components/responses/401NotAuthenticated"
+        "403": 
+          $ref: "#/components/responses/403NotAdmin"
         "404":
           $ref: "#/components/responses/404NotFound"
         "500":
-          $ref: "#/components/responses/500defaultError"
+          $ref: "#/components/responses/500DefaultError"
 
   /orders:
     get:
-      summary: "Retorna información sobre las órdenes actuales"
-      description: "Retorna una lista de objetos conteniendo información sobre todas las órdenes actuales del restaurante"
+      summary: "Retorna información sobre las órdenes del día"
+      description: "Retorna una lista de objetos conteniendo información sobre todas las órdenes actuales del restaurante, incluyendo los productos asociados a cada orden"
       responses:
         "200": 
           $ref: "#/components/responses/200Success"
@@ -246,11 +272,13 @@ paths:
               schema:
                 $ref: "#/components/schemas/Orders"
         "401": 
-          $ref: "#/components/responses/401Unauthorized"
+          $ref: "#/components/responses/401NotAuthenticated"
+        "403": 
+          $ref: "#/components/responses/403NotAdmin"
         "404": 
-          description: "No hay pedidos activos"
+          $ref: "#/components/responses/404NotFound"
         "500":
-          $ref: "#/components/responses/500defaultError"
+          $ref: "#/components/responses/500DefaultError"
     post:
       summary: "Crear un nuevo pedido"
       description: "Crear y enviar una nueva orden al restaurante según lo especificado en el cuerpo de la petición"
@@ -269,20 +297,20 @@ paths:
         "400":
           $ref: "#/components/responses/400BadRequest"
         "401": 
-          $ref: "#/components/responses/401Unauthorized"
+          $ref: "#/components/responses/401NotAuthenticated"
         "500":
-          $ref: "#/components/responses/500defaultError"
+          $ref: "#/components/responses/500DefaultError"
 
-  /orders/{orderId}:
+  /orders/{order_id}:
     parameters:
         - in: path
-          name: orderId
+          name: order_id
           required: true
           schema:
             type: integer
     get:
       summary: "Ver detalles y estado de un pedido"
-      description: "Retorna un objeto con la información detallada de la orden especificada"
+      description: "Retorna un objeto con la información detallada de la orden especificada. Un usuario no admin solo puede acceder si la orden le pertenece"
       responses:
         "200": 
           $ref: "#/components/responses/200Success"
@@ -293,11 +321,13 @@ paths:
               example:
                 $ref: "#/components/examples/Order"
         "401": 
-          $ref: "#/components/responses/401Unauthorized"
+          $ref: "#/components/responses/401NotAuthenticated"
+        "403": 
+          $ref: "#/components/responses/403NotAdmin"
         "404":
           $ref: "#/components/responses/404NotFound"
         "500":
-          $ref: "#/components/responses/500defaultError"
+          $ref: "#/components/responses/500DefaultError"
     patch:
       summary: "Actualizar estado de un pedido"
       description: "El usuario admin puede actualizar el estado de un pedido según corresponda"
@@ -321,9 +351,11 @@ paths:
         "400":
           $ref: "#/components/responses/400BadRequest"
         "401": 
-          $ref: "#/components/responses/401Unauthorized"
+          $ref: "#/components/responses/401NotAuthenticated"
+        "404":
+          $ref: "#/components/responses/404NotFound"
         "500":
-          $ref: "#/components/responses/500defaultError"
+          $ref: "#/components/responses/500DefaultError"
         
   /history:
     get:
@@ -337,11 +369,11 @@ paths:
               schema:
                 $ref: "#/components/schemas/Orders"
         "401": 
-          $ref: "#/components/responses/401Unauthorized"
+          $ref: "#/components/responses/401NotAuthenticated"
         "404": 
           description: "No hay pedidos en el historial"
         "500":
-          $ref: "#/components/responses/500defaultError"
+          $ref: "#/components/responses/500DefaultError"
 
   /history/:date:
     get:
@@ -364,21 +396,21 @@ paths:
               schema:
                 $ref: "#/components/schemas/Orders"
         "401": 
-          $ref: "#/components/responses/401Unauthorized"
+          $ref: "#/components/responses/401NotAuthenticated"
         "404": 
           description: "No hay pedidos registrados en la fecha especificada"
         "500":
-          $ref: "#/components/responses/500defaultError"
+          $ref: "#/components/responses/500DefaultError"
   
   
-  /history/{userId}:
+  /history/{user_id}:
     get:
       summary: "Retorna información histórica de órdenes realizadas por un usuario"
       description: "Retorna una lista de objetos conteniendo información sobre todas las órdenes pasadas 
       realizadas por el usuario especificado"
       parameters:
         - in: path
-          name: userId
+          name: user_id
           required: true
           schema:
             type: string
@@ -390,11 +422,11 @@ paths:
               schema:
                 $ref: "#/components/schemas/Orders"
         "401": 
-          $ref: "#/components/responses/401Unauthorized"
+          $ref: "#/components/responses/401NotAuthenticated"
         "404": 
           description: "No hay pedidos en el historial"
         "500":
-          $ref: "#/components/responses/500defaultError"
+          $ref: "#/components/responses/500DefaultError"
   
 components:
   schemas:
@@ -508,14 +540,14 @@ components:
     201Created:
       description: "Recurso creado correctamente"
     400BadRequest:
-      description: "La información enviada es incorrecta o inválida para realizar esta operación"
-    401Unauthorized:
-      description: "Credenciales inválidas. Autenticación necesaria para realizar esta operación"
+      description: "La información enviada es incorrecta o inválida para realizar la operación"
+    401NotAuthenticated:
+      description: "Credenciales inválidas. Autenticación necesaria para realizar la operación"
     403NotAdmin:
-      description: "El usuario no es administrador y no está autorizado a realizar esta acción"
+      description: "El usuario no es administrador y no está autorizado a realizar la operación"
     404NotFound:
       description: "El recurso especificado no existe"
-    500defaultError:
+    500DefaultError:
       description: "Error imprevisto, no se pudo completar la acción solicitada"
       content:
         application/json:

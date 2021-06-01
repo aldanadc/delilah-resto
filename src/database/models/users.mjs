@@ -35,8 +35,8 @@ export function createModel(sequelize) {
     },
     is_admin: {
       type: DataTypes.BOOLEAN,
-      allowNull: false,
-      default: false
+      allowNull: true,
+      defaultValue: false
     },
   }, {
     createdAt: "created_at",

@@ -30,7 +30,8 @@ export function createModel(sequelize) {
     },
     is_disabled: {
       type: DataTypes.BOOLEAN,
-      allowNull: false
+      allowNull: false,
+      defaultValue: false
     },
   }, {
     createdAt: "created_at",
