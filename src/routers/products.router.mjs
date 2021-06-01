@@ -21,6 +21,7 @@ const createNewProduct = async (request, response) => {
     .status(201)
     .json(product);
   }catch (error) {
+    console.log(error);
     if (error.name === "SequelizeValidationError") {
       response
       .status(400)

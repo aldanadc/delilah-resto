@@ -26,10 +26,10 @@ export default async function connect() {
 
     DB_MODELS.User.hasMany(DB_MODELS.Order, { foreignKey: "user_id" });
     DB_MODELS.Order.belongsTo(DB_MODELS.User, { foreignKey: "user_id" });
-    DB_MODELS.Product.belongsToMany(DB_MODELS.Order, { as: "Order items", through: DB_MODELS.Orders_Products, foreignKey: "product_id" });
-    DB_MODELS.Order.belongsToMany(DB_MODELS.Product, { as: "Order items", through: DB_MODELS.Orders_Products, foreignKey: "order_id" });
-    DB_MODELS.User.belongsToMany(DB_MODELS.Product, { as: "Favourites" ,through: DB_MODELS.Products_Users, foreignKey: "user_id" });
-    DB_MODELS.Product.belongsToMany(DB_MODELS.User, { as: "Favourites", through: DB_MODELS.Products_Users, foreignKey: "product_id" });
+    DB_MODELS.Product.belongsToMany(DB_MODELS.Order, { as: "order_items", through: DB_MODELS.Orders_Products, foreignKey: "product_id", onDelete: "set null"});
+    DB_MODELS.Order.belongsToMany(DB_MODELS.Product, { as: "order_items", through: DB_MODELS.Orders_Products, foreignKey: "order_id", onDelete: "set null"});
+    DB_MODELS.User.belongsToMany(DB_MODELS.Product, { as: "favourites" ,through: DB_MODELS.Products_Users, foreignKey: "user_id"});
+    DB_MODELS.Product.belongsToMany(DB_MODELS.User, { as: "favourites", through: DB_MODELS.Products_Users, foreignKey: "product_id"});
     DB_MODELS.Product.hasMany(DB_MODELS.Orders_Products, {foreignKey: "product_id"});
     DB_MODELS.Orders_Products.belongsTo(DB_MODELS.Product, {foreignKey: "product_id"});
     DB_MODELS.Order.hasMany(DB_MODELS.Orders_Products, {foreignKey: "order_id"});
@@ -141,7 +141,7 @@ export async function getFavs(filter = {}) {
     where: filter,
     attributes: { exclude: ['id', 'created_at', 'updated_at', 'full_name', 'email', 'phone_number', 'password', 'is_admin', 'address']},
     include: [{
-      model: DB_MODELS.Product, as: 'Favourites',
+      model: DB_MODELS.Product, as: 'favourites',
       attributes: { exclude: ['created_at', 'updated_at', 'description', 'price', 'ingredients', 'is_disabled','products_users']},
       through: {
         attributes: []
@@ -172,12 +172,14 @@ export async function getOrders(filter = {}) {
   const order =  Order.findAll({
     where: filter,
     include: [{
-      model: DB_MODELS.Product, as: "Order items",
+      model: DB_MODELS.Product, as: "order_items",
       attributes: { exclude: ['created_at', 'updated_at', 'description', 'ingredients', 'is_disabled']},      
       through: {
         attributes: [/*'product_id',*/ 'product_qty']
       }
-    }]
+    }
+    //,{model: DB_MODELS.User}
+    ]
   });
   return order
 }

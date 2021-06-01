@@ -8,8 +8,8 @@ const Op = Sequelize.Op;
 export function getRouter() {
   const router = new Router();
   router.get("/history", verifyToken, getHistory);
-  //router.get("/history/:user_id", verifyToken, verifyIfAdmin, getUserHistory);
-  router.get("/history/:date", getHistoryByDate);
+  router.get("/history/user/:user_id", verifyToken, verifyIfAdmin, getUserHistory);
+  router.get("/history/:date", verifyToken, verifyIfAdmin, getHistoryByDate);
   return router;
 }
 
@@ -37,25 +37,72 @@ const getHistory = async (request, response) => {
 
 //GET ONE USER'S ORDERS, ONLY ADMIN
 const getUserHistory = async (request, response) => {
-  const userOrders = await getOrders(request.params)
-  response.json(userOrders)
+  try {
+    const userOrders = await getOrders(request.params);
+
+    if (userOrders.length === 0) {
+      response
+        .status(404)
+        .send({
+          status: "Nothing found",
+          message: "There are no orders for this user or user does not exist"
+        })
+    }else {
+      response.json(userOrders)
+    }
+    
+  }catch (error) {
+    console.log(error);
+    response
+      .status(500)
+      .json({
+        status: "Request failed",
+        message: "Internal server error"
+      })
+  }
 }
 
 
-//GET ORDERS BY DATE
+//GET ORDERS BY DATE, ONLY ADMIN
 const getHistoryByDate = async (request, response) => {
   const date = new Date(request.params.date);
-  //const endOfDay = new Date((request.params.date).setHours(23,59,59,999));
-  //const endOfDay = date.setHours(date.getHours() + 24); 
   const endOfDay = new Date(date);
   endOfDay.setHours(endOfDay.getHours() + 24);
+  
   console.log(date);
   console.log(endOfDay);
-  const dateHistory = await getOrders({
-    created_at: {
-      [Op.lt]: endOfDay, //menor que final del día
-      [Op.gte]: date //mayor que ese día a las 00
+
+  const dateTime = date.getTime();
+  const dateCheck = date.getTime();
+
+  if (dateTime !== dateCheck) {
+    response
+    .status(400)
+    .json({
+      status: "Failed request",
+      message: "Invalid date provided"
+    })
+  }else {
+    try {
+      const dateHistory = await getOrders({
+        created_at: {
+          [Op.lt]: endOfDay, //menor que final del día
+          [Op.gte]: date //mayor que ese día a las 00
+        }
+      });
+
+      if (dateHistory.length === 0) {
+        response
+        .status(404)
+        .json({
+          status: "Nothing found",
+          message: "No orders on the specified date"
+        })
+      }else {
+        response.json(dateHistory)
+      }
+    }catch (error) {
+      console.log(error);
     }
-  });
-  response.json(dateHistory)
+  }
 }

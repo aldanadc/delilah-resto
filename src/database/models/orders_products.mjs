@@ -11,6 +11,10 @@ export function createModel(sequelize) {
     product_qty: {
       type: DataTypes.INTEGER,
       defaultValue: 1,
+      validate: {
+        notEmpty: true,
+        isInt: true
+      }
     },
   }, {
     createdAt: "created_at",

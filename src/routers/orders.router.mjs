@@ -168,9 +168,12 @@ const updateStatus = async (request, response) => {
 
 
 
-//CREATE NEW ORDER //CHEQUEAR ORDER DATE QUE DA ERROR POR CÓMO ESTÁ LA TABLA
+//CREATE NEW ORDER
 const createNewOrder = async (request, response) => {
   const newOrderInfo = request.body;
+  const token = request.headers.authorization.replace("Bearer ", "");
+  const tokenInfo = jwt.decode(token);
+  newOrderInfo.user_id = tokenInfo.user_id;
 
   try {
     const newOrder = await createOrder(newOrderInfo);
@@ -183,20 +186,25 @@ const createNewOrder = async (request, response) => {
     
     console.log(error);
 
-    if (error.original.code === "WARN_DATA_TRUNCATED") {
+    if (error instanceof Sequelize.ValidationError) {
       response
         .status(400)
         .send({
           status: "Request failed",
-          message: "Invalid information provided"
+          message: "Invalid or incomplete information provided, please check entered fields"
         });
-    }else if (error.original.code === "ER_TRUNCATED_WRONG_VALUE_FOR_FIELD") {
-      response
-        .status(400)
-        .send({
-          status: "Request failed",
-          message: "Invalid data type provided"
-        });
+
+    }else if((error instanceof Sequelize.DatabaseError)) {
+
+      if ((error.original.code === "WARN_DATA_TRUNCATED") || (error.original.code === "ER_TRUNCATED_WRONG_VALUE_FOR_FIELD")) {
+        response
+          .status(400)
+          .send({
+            status: "Request failed",
+            message: "Invalid or incomplete information provided, please check entered fields"
+          });
+      }
+
     }else {
       response
         .status(500)
@@ -206,4 +214,31 @@ const createNewOrder = async (request, response) => {
         })
     }
   }
-};
+}
+
+
+
+
+
+    // if (error.original.code === "WARN_DATA_TRUNCATED") {
+    //   response
+    //     .status(400)
+    //     .send({
+    //       status: "Request failed",
+    //       message: "Invalid information provided"
+    //     });
+    // }else if (error.original.code === "ER_TRUNCATED_WRONG_VALUE_FOR_FIELD") {
+    //   response
+    //     .status(400)
+    //     .send({
+    //       status: "Request failed",
+    //       message: "Invalid data type provided"
+    //     });
+    // }else {
+    //   response
+    //     .status(500)
+    //     .json({
+    //       status: "Request failed",
+    //       message: "Internal server error"
+    //     })
+    //}

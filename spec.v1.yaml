@@ -379,15 +379,14 @@ paths:
     get:
       summary: "Retorna información histórica de órdenes recibidas de acuerdo a su fecha"
       description: "Retorna una lista de objetos conteniendo información sobre órdenes pasadas recibidas 
-      por el restaurante en la fecha especificada"
+      por el restaurante en la fecha especificada."
       parameters:
         - in: query
           name: date
           schema:
             type: string
-            format: date
           example:
-            "2021-04-05"
+            "2021,04,05"
       responses:
         "200": 
           $ref: "#/components/responses/200Success"
@@ -395,6 +394,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Orders"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
         "401": 
           $ref: "#/components/responses/401NotAuthenticated"
         "404": 
@@ -402,8 +403,7 @@ paths:
         "500":
           $ref: "#/components/responses/500DefaultError"
   
-  
-  /history/{user_id}:
+  /history/user/{user_id}:
     get:
       summary: "Retorna información histórica de órdenes realizadas por un usuario"
       description: "Retorna una lista de objetos conteniendo información sobre todas las órdenes pasadas 
@@ -424,7 +424,7 @@ paths:
         "401": 
           $ref: "#/components/responses/401NotAuthenticated"
         "404": 
-          description: "No hay pedidos en el historial"
+          description: "No hay pedidos en el historial o el usuario no existe"
         "500":
           $ref: "#/components/responses/500DefaultError"
   
@@ -556,54 +556,31 @@ components:
   examples:
     Product:
       value:
+        product_id: 1
         name: "Tacos al pastor"
         description: "Delicioso taco de carne de cerdo y ternera marinada, vegetales y condimentos, acompañado
         de una deliciosa salsa picante"
-        ingredients:
-          - "carne de cerdo y ternera"
-          - "chile picante"
-          - "ajo"
-          - "cebolla"
-          - "cilantro"
-          - "comino"
-          - "sal"
-          - "piña"
-          - "tortilla de maíz"
+        image: "http://imagendetacos.com"
+        ingredients: "carne de cerdo y ternera, chile picante, ajo, cebolla, cilantro, comino, sal, piña, tortilla de maíz"
         price: 349.99
+        is_disabled: false
     Products:
       value:
         - name: "Tacos al pastor"
           description: "Delicioso taco de carne de cerdo y ternera marinada, vegetales y condimentos, acompañado
-          de una deliciosa salsa picante"
-          ingredients:
-            - "carne de cerdo y ternera"
-            - "chile picante"
-            - "ajo"
-            - "cebolla"
-            - "cilantro"
-            - "comino"
-            - "sal"
-            - "piña"
-            - "tortilla de maíz"
+          de una exquisita salsa picante"
+          ingredients: "carne de cerdo y ternera, chile picante, ajo, cebolla, cilantro, comino, sal, piña, tortilla de maíz"
           price: 349.99
+          is_disabled: false
         - name: "Carnitas burrito"
           description: "Nuestro burrito estrella, preparado con carne de cerdo adobada, vegetales, porotos negros 
           y arroz, acompañado de una deliciosa salsa picante"
-          ingredients:
-            - "carne de cerdo adobada"
-            - "arroz blanco"
-            - "porotos negros"
-            - "cebolla"
-            - "tomate"
-            - "lechuga"
-            - "cilantro"
-            - "chile picante"
-            - "palta"
-            - "sal"
-            - "tortilla de maíz"
+          ingredients: "carne de cerdo adobada, arroz blanco, porotos negros, cebolla, tomate, lechuga, cilantro, chile picante, palta, sal, tortilla de maíz"
           price: 379.99
+          is_disabled: true
     User:
       value:
+        user_id: 1,
         username: "queen_freddie"
         full_name: "Freddie Mercury"
         email: "freddiemercury@gmail.com"
@@ -614,14 +591,19 @@ components:
     Order:
       value:
         order_id: 75
-        order_status: "Nuevo"
-        order_time: "2021-05-05T23:23:59.000Z"
-        products:
-          - product: "Tacos al pastor"
-            price: 349.99
-            quantity: 1
-        total: 349.99
+        order_status: "nuevo"
         payment_method: "Efectivo"
+        created_at: "2021-05-05T23:23:59.000Z"
+        updated_at: "2021-05-05T23:23:59.000Z"
+        user_id: 3
+        order_items:
+          - product_id: 2
+            name: "Tacos al pastor"
+            image: "http://imagendetacos.com"
+            price: 349.99
+            order_products: 
+              - product_qty: 1
+        
         delivery_address: "1 Logan Pl, Kensington, London, W8 6DE, UK"
         customer_name: "Freddie Mercury"
         customer_email: "freddiemercury@gmail.com"

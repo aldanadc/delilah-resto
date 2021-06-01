@@ -12,12 +12,18 @@ export function createModel(sequelize) {
       type: DataTypes.ENUM,
       values: ["nuevo", "confirmado", "preparando", "enviando", "cancelado", "entregado"],
       defaultValue: "nuevo",
-      allowNull: false
+      allowNull: false,
+      validate: {
+        notEmpty: true
+      }
     },
     payment_method: {
       type: DataTypes.ENUM,
       values: ["efectivo", "tarjeta"],
-      allowNull: false
+      allowNull: false,
+      validate: {
+        notEmpty: true
+      }
     },
   }, {
     createdAt: "created_at",
