@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { validateUserAgainstDB } from '../config/db.mjs';
 import { ENV } from "../config/env.mjs";
+import { sendError500 } from '../services/errors.services.mjs';
 const secret =  ENV.JWT_SECRET;
 
 export async function authenticateUser(request, response, next) {
@@ -50,7 +51,7 @@ export async function verifyToken(request, response, next) {
         .status(401)
         .json({
           status: "Request failed",
-          message: "Credentials needed to access content"
+          message: "Credentials needed to access content. Please log in"
         })
     }else {
       response
@@ -81,12 +82,15 @@ export async function verifyIfAdmin(request, response, next) {
       })
     }
   }catch (error) {
-    response
-      .status(403)
-      .json({
-        status: "Request failed",
-        message: "Admin credentials needed to access content"
-      })
+
+    console.log(error);
+    sendError500(response);
+    // response
+    //   .status(403)
+    //   .json({
+    //     status: "Request failed",
+    //     message: "Admin credentials needed to access content"
+    //   })
   }
 }
 

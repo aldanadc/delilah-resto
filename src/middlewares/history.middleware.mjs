@@ -14,7 +14,7 @@ export function checkIfValidDate(request, response, next) {
       .status(400)
       .json({
         status: "Failed request",
-        message: "Invalid date provided"
+        message: "Invalid date provided in query parameters"
       })
   }else {
     next();

@@ -25,14 +25,14 @@ export default async function connect() {
 
     DB_MODELS.User.hasMany(DB_MODELS.Order, { foreignKey: "user_id" });
     DB_MODELS.Order.belongsTo(DB_MODELS.User, { foreignKey: "user_id" });
-    DB_MODELS.Product.belongsToMany(DB_MODELS.Order, { as: "order_items", through: DB_MODELS.Orders_Products, foreignKey: "product_id", onDelete: "set null"});
-    DB_MODELS.Order.belongsToMany(DB_MODELS.Product, { as: "order_items", through: DB_MODELS.Orders_Products, foreignKey: "order_id", onDelete: "set null"});
-    DB_MODELS.User.belongsToMany(DB_MODELS.Product, { as: "favourites" ,through: DB_MODELS.Products_Users, foreignKey: "user_id"});
-    DB_MODELS.Product.belongsToMany(DB_MODELS.User, { as: "favourites", through: DB_MODELS.Products_Users, foreignKey: "product_id"});
-    DB_MODELS.Product.hasMany(DB_MODELS.Orders_Products, {foreignKey: "product_id"});
-    DB_MODELS.Orders_Products.belongsTo(DB_MODELS.Product, {foreignKey: "product_id"});
-    DB_MODELS.Order.hasMany(DB_MODELS.Orders_Products, {foreignKey: "order_id"});
-    DB_MODELS.Orders_Products.belongsTo(DB_MODELS.Order, {foreignKey: "order_id"});
+    DB_MODELS.Product.belongsToMany(DB_MODELS.Order, { as: "order_items", through: DB_MODELS.Orders_Products, foreignKey: "product_id", onDelete: "set null" });
+    DB_MODELS.Order.belongsToMany(DB_MODELS.Product, { as: "order_items", through: DB_MODELS.Orders_Products, foreignKey: "order_id", onDelete: "set null" });
+    DB_MODELS.User.belongsToMany(DB_MODELS.Product, { as: "favourites" ,through: DB_MODELS.Products_Users, foreignKey: "user_id" });
+    DB_MODELS.Product.belongsToMany(DB_MODELS.User, { as: "favourites", through: DB_MODELS.Products_Users, foreignKey: "product_id" });
+    DB_MODELS.Product.hasMany(DB_MODELS.Orders_Products, { foreignKey: "product_id" });
+    DB_MODELS.Orders_Products.belongsTo(DB_MODELS.Product, { foreignKey: "product_id" });
+    DB_MODELS.Order.hasMany(DB_MODELS.Orders_Products, { foreignKey: "order_id" });
+    DB_MODELS.Orders_Products.belongsTo(DB_MODELS.Order, { foreignKey: "order_id" });
 
   await sequelize.sync({ force: false })
   }catch (error) {
@@ -60,7 +60,7 @@ export async function getProducts(filter = {}) {
   const Product = DB_MODELS.Product;
   const product =  Product.findAll({
     where: filter,
-    attributes: { exclude: ['created_at', 'updated_at'] },
+    attributes: { exclude: [ "is_disabled", "created_at", "updated_at"] },
   });
   return product
 }
@@ -141,8 +141,8 @@ export async function getFavs(filter = {}) {
     where: filter,
     attributes: { exclude: ['id', 'created_at', 'updated_at', 'full_name', 'email', 'phone_number', 'password', 'is_admin', 'address']},
     include: [{
-      model: DB_MODELS.Product, as: 'favourites',
-      attributes: { exclude: ['created_at', 'updated_at', 'description', 'price', 'ingredients', 'is_disabled','products_users']},
+      model: DB_MODELS.Product, as: "favourites",
+      attributes: { exclude: ["created_at", "updated_at", "description", "price", "ingredients", "is_disabled"]},
       through: {
         attributes: []
       }
@@ -161,13 +161,11 @@ export async function getOrders(filter = {}) {
     where: filter,
     include: [{
       model: DB_MODELS.Product, as: "order_items",
-      attributes: { exclude: ['created_at', 'updated_at', 'description', 'ingredients', 'is_disabled']},      
+      attributes: { exclude: ["created_at", "updated_at", "description", "ingredients", "is_disabled"]},      
       through: {
-        attributes: [/*'product_id',*/ 'product_qty']
+        attributes: ["product_qty"]
       }
-    }
-    //,{model: DB_MODELS.User}
-    ]
+    }]
   });
   return order
 }
@@ -179,7 +177,7 @@ export async function updateOrderStatus(updatedStatus, filter = {}) {
   const updatedOrder =  Order.update( { status: updatedStatus },
     {
     where: filter,
-    attributes: { exclude: ['created_at'] }
+    attributes: { exclude: ["created_at"] }
     });
   return updatedOrder
 }
@@ -192,8 +190,10 @@ export async function createOrder(orderInfo) {
   const newOrder = await Order.create(
     orderInfo,
     {
-      attributes: { exclude: 'updated_at'}, //ESTO NO FUNCIONA
-      include: [DB_MODELS.Orders_Products]
+      attributes: { exclude: "updated_at"}, //ESTO NO FUNCIONA
+      include: [{
+        model: DB_MODELS.Orders_Products
+      }]
     }
   );
 

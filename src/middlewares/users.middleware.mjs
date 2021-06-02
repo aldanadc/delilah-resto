@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-
+import { sendError403 } from '../services/errors.services.mjs';
 
 export function verifyIfDataOwner(request, response, next) {
 
@@ -10,12 +10,14 @@ export function verifyIfDataOwner(request, response, next) {
     next();
 
   }else {
-    response
-      .status(403)
-      .json({
-        status: "Request failed",
-        message: "User is not authorized to perform such action"
-      })
+
+    sendError403(response);
+    // response
+    //   .status(403)
+    //   .json({
+    //     status: "Request failed",
+    //     message: "User is not authorized to perform such action"
+    //   })
   }
 }
 
@@ -32,11 +34,12 @@ export function verifyIfDataOwnerOrAdmin(request, response, next) {
     next();
 
   }else {
-    response
-      .status(403)
-      .json({
-        status: "Request failed",
-        message: "User is not authorized to perform such action"
-      })
+    sendError403(response);
+    // response
+    //   .status(403)
+    //   .json({
+    //     status: "Request failed",
+    //     message: "User is not authorized to perform such action"
+    //   })
   }
 }
