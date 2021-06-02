@@ -47,6 +47,26 @@ export const getAllProducts = async (request, response) => {
   }
 }
 
+//GET DISABLED PRODUCTS
+export const getDisabledProducts = async (request, response) => {
+  try {
+    const disabledProducts = await getProducts({ is_disabled: true });
+
+    if (disabledProducts.length === 0) {
+
+      sendError404(response);
+
+    }else {
+      response.json(disabledProducts);
+    }
+
+  } catch (error) {
+    console.log(error);
+
+    sendError500(response);
+  }
+}
+
 //GET ONE PRODUCT
 export const getOneProduct = async (request, response) => {
   const queryProduct = request.params;

@@ -159,6 +159,28 @@ paths:
         "500":
           $ref: "#/components/responses/500DefaultError"
 
+  /products/disabled:
+    get:
+      summary: "Returns products currently disabled"
+      description: "Returns a list of objects with information about the products currently set as disabled. Only admin users can see this information"
+      responses:
+        "200":
+          $ref: "#/components/responses/200Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+              example:  
+                $ref: "#/components/examples/Product"
+        "401": 
+          $ref: "#/components/responses/401NotAuthenticated"
+        "403": 
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "500":
+          $ref: "#/components/responses/500DefaultError"
+
   /users:
     get:
       summary: "Returns the information for all registered users"

@@ -60,7 +60,7 @@ export async function getProducts(filter = {}) {
   const Product = DB_MODELS.Product;
   const product =  Product.findAll({
     where: filter,
-    attributes: { exclude: [ "is_disabled", "created_at", "updated_at"] },
+    attributes: { exclude: ["created_at", "updated_at"] },
   });
   return product
 }
@@ -189,11 +189,7 @@ export async function createOrder(orderInfo) {
   const newOrder = await Order.create(
     orderInfo,
     {
-      attributes: { exclude: "updated_at"}, //ESTO NO FUNCIONA, VER SACAR ID TABLA INTERMEDIA
-      include: [{
-        model: DB_MODELS.Orders_Products,
-        attributes: { exclude: "updated_at"}
-      }]
+      include: [DB_MODELS.Orders_Products]
     }
   );
 
