@@ -108,7 +108,7 @@ export const updateStatus = async (request, response) => {
         await updateOrderStatus(status, orderId);
 
         response
-          .status(200)
+          .status(204)
           .send({
             status: "Request successful",
             message: "Order status updated"

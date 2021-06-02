@@ -10,8 +10,8 @@ export function createModel(sequelize) {
     },
     status: {
       type: DataTypes.ENUM,
-      values: ["nuevo", "confirmado", "preparando", "enviando", "cancelado", "entregado"],
-      defaultValue: "nuevo",
+      values: ["new", "confirmed", "preparing", "on its way", "cancelled", "delivered"],
+      defaultValue: "new",
       allowNull: false,
       validate: {
         notEmpty: true
@@ -19,7 +19,7 @@ export function createModel(sequelize) {
     },
     payment_method: {
       type: DataTypes.ENUM,
-      values: ["efectivo", "tarjeta"],
+      values: ["cash", "card"],
       allowNull: false,
       validate: {
         notEmpty: true
@@ -32,6 +32,3 @@ export function createModel(sequelize) {
 
   return Order;
 };
-
-//User.hasMany(Order)
-//Order.belongsTo(User)

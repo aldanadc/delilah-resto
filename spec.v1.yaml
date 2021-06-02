@@ -1,10 +1,9 @@
 openapi: "3.0.3"
 info:
-  title: "Delilah Restó"
-  description: "API para la gestión de pedidos de un restaurante. Como cliente podrás registrarte,
-  actualizar tu información, ver el listado de productos disponibles y realizar pedidos. Los administradores 
-  del restaurante tienen la posibilidad de ver todos los pedidos y actualizarlos, así como también de crear 
-  nuevos productos y eliminar otros existentes."
+  title: "Delilah Resto"
+  description: "API for the management of restaurant orders and deliveries. Users can register, list the available products,
+  place orders, read and update their information. An admin user can see and update all orders and products, create, update and delete products,
+  as well as reading all the users' information."
   version: "1.0.0"
   contact:
     name: "Aldana Daniela Casal"
@@ -13,24 +12,26 @@ info:
     name: "ISC"
 servers:
   - url: "http://localhost:8080/api/1.0.0"
-    description: "Servidor local"
+    description: "Local server"
 paths:
   /login:
     post:
-      summary: "Hacer login a cuenta de usuario"
-      description: "Permite a un usuario existente hacer log in a su cuenta de acuerdo a sus datos de registro"
+      summary: "Login to user account"
+      description: "Allows an user to log into their account if they are a registered user"
       responses:
         "200":
           $ref: "#/components/responses/200Success"
         "401":
           $ref: "#/components/responses/401NotAuthenticated"
+        "500":
+          $ref: "#/components/responses/500DefaultError"
 
   /register:
     post:
-      summary: "Crear un nuevo usuario"
-      description: "Permite crear un nuevo usuario con información proveniente de un formulario"
+      summary: "Create a new user"
+      description: "Allows a new user to create an account provided they complete all the necessary information"
       requestBody:
-        description: "Información del nuevo usuario"
+        description: "New user's information"
         required: true
         content:
           application/json:
@@ -48,7 +49,7 @@ paths:
 
   /products:
     get:
-      summary: "Retorna una lista con todos los productos disponibles"
+      summary: "Returns an array of objects with information for all the available products"
       responses:
         "200":
           $ref: "#/components/responses/200Success"
@@ -60,13 +61,15 @@ paths:
                 $ref: "#/components/examples/Products"
         "401": 
           $ref: "#/components/responses/401NotAuthenticated"
+        "404":
+          $ref: "#/components/responses/404NotFound"
         "500":
           $ref: "#/components/responses/500DefaultError"
     post:
-      summary: "Crear un nuevo producto y añadirlo al menú"
-      description: "Permite crear un nuevo producto de acuerdo a la estructura establecida y añadirlo al menú"
+      summary: "Create a new product"
+      description: "Allows an admin user to create a new product following a set structure and add it to the available products"
       requestBody:
-        description: "Información del nuevo producto"
+        description: "New product's details"
         required: true
         content:
           application/json:
@@ -75,7 +78,7 @@ paths:
       responses:
         "201": 
           $ref: "#/components/responses/201Created"
-          description: "Información del producto creado"
+          description: "Details of the newly created product"
           content:
             application/json:
               schema:
@@ -85,7 +88,9 @@ paths:
         "401": 
           $ref: "#/components/responses/401NotAuthenticated"
         "403": 
-          $ref: "#/components/responses/403NotAdmin"
+          $ref: "#/components/responses/403Forbidden"
+        "500":
+          $ref: "#/components/responses/500DefaultError"
 
   /products/{product_id}:
     parameters:
@@ -95,7 +100,7 @@ paths:
           schema:
             type: string
     get:
-      summary: "Retorna información detallada sobre un producto de acuerdo a su ID"
+      summary: "Returns the details of a product searching by its ID"
       responses:
         "200":
           $ref: "#/components/responses/200Success"
@@ -112,10 +117,10 @@ paths:
         "500":
           $ref: "#/components/responses/500DefaultError"
     patch:
-      summary: "Actualizar un producto existente"
-      description: "Permite actualizar parcialmente la información del producto especificado de acuerdo a la estructura establecida"
+      summary: "Update an existing product"
+      description: "Allows an admin user to partially update the details for an existing product"
       requestBody:
-        description: "Información del producto a ser actualizada"
+        description: "Information to be updated on the product"
         required: true
         content:
           application/json:
@@ -124,7 +129,7 @@ paths:
       responses:
         "200": 
           $ref: "#/components/responses/200Success"
-          description: "Información del producto luego de la actualización"
+          description: "Details of the product after its update"
           content:
             application/json:
               schema:
@@ -134,19 +139,21 @@ paths:
         "401": 
           $ref: "#/components/responses/401NotAuthenticated"
         "403": 
-          $ref: "#/components/responses/403NotAdmin"
+          $ref: "#/components/responses/403Forbidden"
         "404":
           $ref: "#/components/responses/404NotFound"
+        "500":
+          $ref: "#/components/responses/500DefaultError"
     delete:
-      summary: "Borrar un producto existente"
-      description: "Permite borrar un producto existente en la base de datos"
+      summary: "Delete an existing product"
+      description: "Allows an admin user to delete an existing product"
       responses:
         "204":
-          description: "Producto borrado exitosamente"
+          description: "Product deleted"
         "401": 
           $ref: "#/components/responses/401NotAuthenticated"
         "403": 
-          $ref: "#/components/responses/403NotAdmin"
+          $ref: "#/components/responses/403Forbidden"
         "404":
           $ref: "#/components/responses/404NotFound"
         "500":
@@ -154,8 +161,8 @@ paths:
 
   /users:
     get:
-      summary: "Retorna información sobre todos los usuarios"
-      description: "Retorna una lista de objetos con información de todos los usuarios registrados"
+      summary: "Returns the information for all registered users"
+      description: "Returns a list of objects with details of all registered users. Only admin users can see this information"
       responses:
         "200": 
           $ref: "#/components/responses/200Success"
@@ -166,7 +173,7 @@ paths:
         "401": 
           $ref: "#/components/responses/401NotAuthenticated"
         "403": 
-          $ref: "#/components/responses/403NotAdmin"
+          $ref: "#/components/responses/403Forbidden"
         "500":
           $ref: "#/components/responses/500DefaultError"
 
@@ -178,8 +185,8 @@ paths:
           schema:
             type: string
     get:
-      summary: "Retorna información sobre un usuario"
-      description: "Retorna una lista con un objeto de usuario conteniendo información del usuario especificado. Un usuario logueado no admin solo podrá acceder a su propia información"
+      summary: "Returns information about a specified user"
+      description: "Returns a list with an object with the details of the requested user. A non-admin user will only get a successful response if they are asking for their own information"
       responses:
         "200": 
           $ref: "#/components/responses/200Success"
@@ -192,16 +199,16 @@ paths:
         "401": 
           $ref: "#/components/responses/401NotAuthenticated"
         "403": 
-          $ref: "#/components/responses/403NotAdmin"
+          $ref: "#/components/responses/403Forbidden"
         "404":
           $ref: "#/components/responses/404NotFound"
         "500":
           $ref: "#/components/responses/500DefaultError"
     patch:
-        summary: "Actualizar información de un usuario existente"
-        description: "Permite a un usuario actualizar su propia información de acuerdo a la estructura establecida"
+        summary: "Update information for an existing user"
+        description: "Allows registered users to update their stored information. All users can only update their own details "
         requestBody:
-          description: "Información actualizada del usuario"
+          description: "User's new information"
           required: true
           content:
             application/json:
@@ -216,26 +223,26 @@ paths:
           "401": 
             $ref: "#/components/responses/401NotAuthenticated"
           "403": 
-            $ref: "#/components/responses/403NotAdmin"
+            $ref: "#/components/responses/403Forbidden"
           "500":
             $ref: "#/components/responses/500DefaultError"
     delete:
-      summary: "Borrar un usuario existente"
-      description: "Permite a cada usuario borrar su propio registro en la base de datos"
+      summary: "Delete an existing user"
+      description: "Allows all users to delete their own user account"
       responses:
         "204":
-          description: "Usuario borrado exitosamente"
+          description: "User deleted"
         "401": 
           $ref: "#/components/responses/401NotAuthenticated"
         "403": 
-          $ref: "#/components/responses/403NotAdmin"
+          $ref: "#/components/responses/403Forbidden"
         "500":
           $ref: "#/components/responses/500DefaultError"
 
   /users/{user_id}/favs:
     get:
-      summary: "Retorna información sobre los productos favoritos de un usuario."
-      description: "Devuelve una lista con un objeto conteniendo el id del usuario, su nombre de usuario y una lista de objetos de productos favoritos asociados al usuario. Solo el usuario en cuestión y un administrador pueden acceder a la información."
+      summary: "Returns information about an user's favourites products"
+      description: "Returns an array of objects with the specified user's id, username and an array containing their associated favourite products. An admin user can see everybody's favourites but a non-admin user can only see their own"
       parameters:
         - in: path
           name: user_id
@@ -254,7 +261,7 @@ paths:
         "401": 
           $ref: "#/components/responses/401NotAuthenticated"
         "403": 
-          $ref: "#/components/responses/403NotAdmin"
+          $ref: "#/components/responses/403Forbidden"
         "404":
           $ref: "#/components/responses/404NotFound"
         "500":
@@ -262,8 +269,8 @@ paths:
 
   /orders:
     get:
-      summary: "Retorna información sobre las órdenes del día"
-      description: "Retorna una lista de objetos conteniendo información sobre todas las órdenes actuales del restaurante, incluyendo los productos asociados a cada orden"
+      summary: "Returns information about current day's orders"
+      description: "For admin users, returns an array of objects containing the restaurant's current day's orders, from 00hs to 23.59hs. For non-admin users, it returns the orders they placed on that day if they have any. The products associated to each order are also included in the order's information"
       responses:
         "200": 
           $ref: "#/components/responses/200Success"
@@ -273,17 +280,15 @@ paths:
                 $ref: "#/components/schemas/Orders"
         "401": 
           $ref: "#/components/responses/401NotAuthenticated"
-        "403": 
-          $ref: "#/components/responses/403NotAdmin"
         "404": 
           $ref: "#/components/responses/404NotFound"
         "500":
           $ref: "#/components/responses/500DefaultError"
     post:
-      summary: "Crear un nuevo pedido"
-      description: "Crear y enviar una nueva orden al restaurante según lo especificado en el cuerpo de la petición"
+      summary: "Create a new order"
+      description: "Allows a registered user to send a new order to the restaurant, choosing the products they want and the payment method"
       requestBody:
-        description: "Detalles del pedido a enviar"
+        description: "Details of the order to be sent"
         required: true
         content:
           application/json:
@@ -309,8 +314,8 @@ paths:
           schema:
             type: integer
     get:
-      summary: "Ver detalles y estado de un pedido"
-      description: "Retorna un objeto con la información detallada de la orden especificada. Un usuario no admin solo puede acceder si la orden le pertenece"
+      summary: "Get an order's details"
+      description: "Returns an object with information about the specified order's details. A non-admin user can only see the information if they were the ones that placed the order"
       responses:
         "200": 
           $ref: "#/components/responses/200Success"
@@ -323,35 +328,37 @@ paths:
         "401": 
           $ref: "#/components/responses/401NotAuthenticated"
         "403": 
-          $ref: "#/components/responses/403NotAdmin"
+          $ref: "#/components/responses/403Forbidden"
         "404":
           $ref: "#/components/responses/404NotFound"
         "500":
           $ref: "#/components/responses/500DefaultError"
     patch:
-      summary: "Actualizar estado de un pedido"
-      description: "El usuario admin puede actualizar el estado de un pedido según corresponda"
+      summary: "Update an order's status"
+      description: "Allows an admin user to update the specified order's status, following one of the pre-set stages"
       requestBody:
-        description: "Nuevo estado de la orden"
+        description: "Order's new status"
         required: true
         content:
           application/json:
               schema:
                 type: string
                 enum:
-                  - "Nuevo"
-                  - "Confirmado"
-                  - "Preparando"
-                  - "Enviando"
-                  - "Cancelado"
-                  - "Entregado"
+                  - "new"
+                  - "confirmed"
+                  - "preparing"
+                  - "sending"
+                  - "cancelled"
+                  - "delivered"
       responses:
-        "200": 
-          $ref: "#/components/responses/200Success"
+        "204": 
+          description: "Order status updated"
         "400":
           $ref: "#/components/responses/400BadRequest"
         "401": 
           $ref: "#/components/responses/401NotAuthenticated"
+        "403": 
+          $ref: "#/components/responses/403Forbidden"
         "404":
           $ref: "#/components/responses/404NotFound"
         "500":
@@ -359,8 +366,8 @@ paths:
         
   /history:
     get:
-      summary: "Retorna información histórica de órdenes recibidas"
-      description: "Retorna una lista de objetos conteniendo información sobre todas las órdenes pasadas recibidas por el restaurante"
+      summary: "Returns information about all of the orders for the restaurant"
+      description: "Returns a list of objects containing information about all the orders placed.  If the user is non-admin, they will only see the orders they placed"
       responses:
         "200": 
           $ref: "#/components/responses/200Success"
@@ -370,16 +377,15 @@ paths:
                 $ref: "#/components/schemas/Orders"
         "401": 
           $ref: "#/components/responses/401NotAuthenticated"
-        "404": 
-          description: "No hay pedidos en el historial"
+        "404":
+          $ref: "#/components/responses/404NotFound"
         "500":
           $ref: "#/components/responses/500DefaultError"
 
   /history/:date:
     get:
-      summary: "Retorna información histórica de órdenes recibidas de acuerdo a su fecha"
-      description: "Retorna una lista de objetos conteniendo información sobre órdenes pasadas recibidas 
-      por el restaurante en la fecha especificada."
+      summary: "Returns information about orders placed on a specified date"
+      description: "Returns a list of objects containing information about the specified date's orders. The array will be empty if no orders were place that day"
       parameters:
         - in: query
           name: date
@@ -398,16 +404,15 @@ paths:
           $ref: "#/components/responses/400BadRequest"
         "401": 
           $ref: "#/components/responses/401NotAuthenticated"
-        "404": 
-          description: "No hay pedidos registrados en la fecha especificada"
+        "404":
+          $ref: "#/components/responses/404NotFound"
         "500":
           $ref: "#/components/responses/500DefaultError"
   
   /history/user/{user_id}:
     get:
-      summary: "Retorna información histórica de órdenes realizadas por un usuario"
-      description: "Retorna una lista de objetos conteniendo información sobre todas las órdenes pasadas 
-      realizadas por el usuario especificado"
+      summary: "Returns information about a user's order history"
+      description: "Returns a list of objects containing information about the specified user's order history. Only admin users can access this content"
       parameters:
         - in: path
           name: user_id
@@ -423,8 +428,8 @@ paths:
                 $ref: "#/components/schemas/Orders"
         "401": 
           $ref: "#/components/responses/401NotAuthenticated"
-        "404": 
-          description: "No hay pedidos en el historial o el usuario no existe"
+        "404":
+          $ref: "#/components/responses/404NotFound"
         "500":
           $ref: "#/components/responses/500DefaultError"
   
@@ -494,12 +499,12 @@ components:
         order_status:
           type: string
           enum:
-            - "Nuevo"
-            - "Confirmado"
-            - "Preparando"
-            - "Enviando"
-            - "Cancelado"
-            - "Entregado"
+            - "new"
+            - "confirmed"
+            - "preparing"
+            - "on its way"
+            - "cancelled"
+            - "delivered"
         order_date:
           type: string
           format: date-time
@@ -536,19 +541,19 @@ components:
         - message
   responses:
     200Success:
-      description: "Operación exitosa"
+      description: "Request sucessful"
     201Created:
-      description: "Recurso creado correctamente"
+      description: "Resource created"
     400BadRequest:
-      description: "La información enviada es incorrecta o inválida para realizar la operación"
+      description: "Incorrect or missing information, please check all required fields"
     401NotAuthenticated:
-      description: "Credenciales inválidas. Autenticación necesaria para realizar la operación"
-    403NotAdmin:
-      description: "El usuario no es administrador y no está autorizado a realizar la operación"
+      description: "Invalid login information"
+    403Forbidden:
+      description: "User is not authorized to perform such action"
     404NotFound:
-      description: "El recurso especificado no existe"
+      description: "The requested resource does not exist"
     500DefaultError:
-      description: "Error imprevisto, no se pudo completar la acción solicitada"
+      description: "Internal server error"
       content:
         application/json:
           schema:
@@ -558,24 +563,21 @@ components:
       value:
         product_id: 1
         name: "Tacos al pastor"
-        description: "Delicioso taco de carne de cerdo y ternera marinada, vegetales y condimentos, acompañado
-        de una deliciosa salsa picante"
+        description: "Delicious taco with marinated pork and veal meat, with roasted vegetables, seasoning and hot sauce"
         image: "http://imagendetacos.com"
-        ingredients: "carne de cerdo y ternera, chile picante, ajo, cebolla, cilantro, comino, sal, piña, tortilla de maíz"
+        ingredients: "pork and veal meat, hot chili, garlic, onion, cilantro leaves, cumin, salt, pineapple, corn tortilla"
         price: 349.99
         is_disabled: false
     Products:
       value:
         - name: "Tacos al pastor"
-          description: "Delicioso taco de carne de cerdo y ternera marinada, vegetales y condimentos, acompañado
-          de una exquisita salsa picante"
-          ingredients: "carne de cerdo y ternera, chile picante, ajo, cebolla, cilantro, comino, sal, piña, tortilla de maíz"
+          description: "Delicious taco with marinated pork and veal meat, with roasted and fresh vegetables, seasoning and hot sauce"
+          ingredients: "pork and veal meat, hot chili, garlic, onion, cilantro leaves, cumin, salt, pineapple, corn tortilla"
           price: 349.99
           is_disabled: false
         - name: "Carnitas burrito"
-          description: "Nuestro burrito estrella, preparado con carne de cerdo adobada, vegetales, porotos negros 
-          y arroz, acompañado de una deliciosa salsa picante"
-          ingredients: "carne de cerdo adobada, arroz blanco, porotos negros, cebolla, tomate, lechuga, cilantro, chile picante, palta, sal, tortilla de maíz"
+          description: "Our star burrito, made with marinated pork meat, roasted and fresh vegetables, black beans, cheese and white rice, seasoned with our delicious hot sauce"
+          ingredients: "marinated pork meat, white rice, black beans, onion, tomato, lettuce, cilantro leaves, hot chili, avocado, salt, corn tortilla"
           price: 379.99
           is_disabled: true
     User:
@@ -591,8 +593,8 @@ components:
     Order:
       value:
         order_id: 75
-        order_status: "nuevo"
-        payment_method: "Efectivo"
+        order_status: "new"
+        payment_method: "cash"
         created_at: "2021-05-05T23:23:59.000Z"
         updated_at: "2021-05-05T23:23:59.000Z"
         user_id: 3
