@@ -12,7 +12,7 @@ info:
     name: "ISC"
 servers:
   - url: "http://localhost:8080/api/1.0.0"
-    description: "Local serverrrr"
+    description: "Local server"
 paths:
   /login:
     post:
