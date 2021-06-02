@@ -1,10 +1,10 @@
 import Sequelize from "sequelize";
 import { ENV } from "./env.mjs"
-import { createModel as createUsersModel } from '../database/models/users.mjs';
-import { createModel as createProductsModel } from '../database/models/products.mjs';
-import { createModel as createOrdersModel } from '../database/models/orders.mjs';
-import { createModel as createOrders_ProductsModel } from '../database/models/orders_products.mjs';
-import { createModel as createProducts_Users } from '../database/models/products_users.mjs';
+import { createModel as createUsersModel } from '../database_models/users.mjs';
+import { createModel as createProductsModel } from '../database_models/products.mjs';
+import { createModel as createOrdersModel } from '../database_models/orders.mjs';
+import { createModel as createOrders_ProductsModel } from '../database_models/orders_products.mjs';
+import { createModel as createProducts_Users } from '../database_models/products_users.mjs';
 export const DB_MODELS = {};
 
 export default async function connect() {
