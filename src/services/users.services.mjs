@@ -1,3 +1,4 @@
+import jwt from 'jsonwebtoken';
 import { getUsers, getFavs, deleteUser, updateUser } from "../config/db.mjs";
 import { sendError404, sendError500 } from "./errors.services.mjs";
 
@@ -8,12 +9,6 @@ export const getAllUsers = async (request, response) => {
 
     if (allUsers.length === 0) {
       sendError404(response);
-      // response
-      //   .status(404)
-      //   .json({
-      //     status: "Request failed",
-      //     message: "No registered users found"
-      //   })
     } else {
       response.json(allUsers);
     }
@@ -22,12 +17,7 @@ export const getAllUsers = async (request, response) => {
     console.log(error);
 
     sendError500(response);
-    // response
-    //   .status(500)
-    //   .json({
-    //     status: "Request failed",
-    //     message: "Internal server error"
-    //   })
+
   }
 }
 
@@ -38,12 +28,6 @@ export const getOneUser = async (request, response) => {
 
     if (user.length === 0) {
       sendError404(response);
-      // response
-      //   .status(404)
-      //   .json({
-      //     status: "Request failed",
-      //     message: "No user with specified ID"
-      //   })
     } else {
       response.json(user);
     }
@@ -52,12 +36,7 @@ export const getOneUser = async (request, response) => {
     console.log(error);
 
     sendError500(response);
-    // response
-    //   .status(500)
-    //   .json({
-    //     status: "Request failed",
-    //     message: "Internal server error"
-    //   })
+
   }
 }
 
@@ -69,12 +48,6 @@ export const getUserFavs = async (request, response) => {
 
     if (favs.length === 0) {
       sendError404(response);
-      // response
-      //   .status(404)
-      //   .json({
-      //     status: "Request failed",
-      //     message: "No favourites for this user"
-      //   })
     } else {
       response.json(favs);
     }
@@ -83,24 +56,22 @@ export const getUserFavs = async (request, response) => {
     console.log(error);
 
     sendError500(response);
-    // response
-    //   .status(500)
-    //   .json({
-    //     status: "Request failed",
-    //     message: "Internal server error"
-    //   })
+
   }
 }
 
 
 export const deleteUserAccount = async (request, response) => {
+  const token = request.headers.authorization.replace("Bearer ", "");
+  const tokenInfo = jwt.decode(token);
+
   try {
     await deleteUser({ user_id: tokenInfo.user_id });
 
     response
       .status(200)
       .json({
-        status: "Request successfull",
+        status: "Request successful",
         message: "User deleted"
       });
 
@@ -108,12 +79,6 @@ export const deleteUserAccount = async (request, response) => {
     console.log(error);
 
     sendError500(response);
-    // response
-    //   .status(500)
-    //   .json({
-    //     status: "Request failed",
-    //     message: "Internal server error"
-    //   })
   }
 }
 
@@ -127,7 +92,7 @@ export const modifyMyUser = async (request, response) => {
     response
       .status(200)
       .json({
-        status: "Request successfull",
+        status: "Request successful",
         message: "User updated"
       });
 
@@ -135,12 +100,6 @@ export const modifyMyUser = async (request, response) => {
     console.log(error);
 
     sendError500(response);
-    // response
-    //   .status(500)
-    //   .json({
-    //     status: "Request failed",
-    //     message: "Internal server error"
-    //   })
   }
 }
 

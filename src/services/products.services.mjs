@@ -18,24 +18,11 @@ export const createNewProduct = async (request, response) => {
     if (error.name === "SequelizeValidationError") {
 
       sendError400(response);
-      // response
-      //   .status(400)
-      //   .json({
-      //     status: "Request failed",
-      //     message: "Incorrect or missing information, please check all required fields"
-      //   })
 
     } else {
       console.log(error);
 
       sendError500(response);
-
-      // response
-      //   .status(500)
-      //   .json({
-      //     status: "Request failed",
-      //     message: "Internal server error"
-      //   })
     }
   }
 };
@@ -69,12 +56,6 @@ export const getOneProduct = async (request, response) => {
     if (product.length === 0) {
 
       sendError404(response);
-      // response
-      //   .status(404)
-      //   .json({
-      //     status: "Not found",
-      //     message: "No product with specified ID"
-      //   })
     } else {
       response.json(product);
     }
@@ -82,12 +63,6 @@ export const getOneProduct = async (request, response) => {
     console.log(error);
 
     sendError500(response);
-    // response
-    //   .status(500)
-    //   .json({
-    //     status: "Request failed",
-    //     message: "Internal server error"
-    //   })
   }
 }
 
@@ -100,12 +75,7 @@ export const updateOneProduct = async (request, response) => {
     if (!Object.keys(updatedInfo).length) {
 
       sendError400(response);
-      // response
-      //   .status(400)
-      //   .json({
-      //     status: "Request failed",
-      //     message: "No update information provided"
-      //   })
+
     } else {
       await updateProduct(updatedInfo, productId);
       const updatedProduct = await getProducts(productId)
@@ -113,12 +83,7 @@ export const updateOneProduct = async (request, response) => {
       if (updatedProduct.length === 0) {
 
         sendError404(response);
-        // response
-        //   .status(404)
-        //   .json({
-        //     status: "Not found",
-        //     message: "No product with specified ID"
-        //   })
+
       } else {
         response.json(updatedProduct);
       }
@@ -127,12 +92,6 @@ export const updateOneProduct = async (request, response) => {
     console.log(error);
 
     sendError500(response);
-    // response
-    //   .status(500)
-    //   .json({
-    //     status: "Request failed",
-    //     message: "Internal server error"
-    //   })
   }
 }
 
@@ -146,19 +105,14 @@ export const deleteAProduct = async (request, response) => {
     if (productToDelete.length === 0) {
 
       sendError404(response);
-      // response
-      //   .status(404)
-      //   .json({
-      //     status: "Not found",
-      //     message: "No product with specified ID"
-      //   })
+
     } else {
       await deleteProduct(productId);
       
       response
         .status(200)
         .json({
-          status: "Request successfull",
+          status: "Request successful",
           message: "Product deleted"
         })
     }
@@ -169,11 +123,5 @@ export const deleteAProduct = async (request, response) => {
     console.log(error);
 
     sendError500(response);
-    // response
-    //   .status(500)
-    //   .json({
-    //     status: "Request failed",
-    //     message: "Internal server error"
-    //   })
   }
 }

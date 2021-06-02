@@ -1,4 +1,4 @@
-import express, { json, urlencoded} from "express";
+import express, { json, urlencoded } from "express";
 import { ENV } from "./config/env.mjs";
 import connect from "./config/db.mjs";
 import { getRouter as getHistoryRouter } from "./routers/history.router.mjs";
@@ -42,47 +42,3 @@ function main() {
 };
 
 main();
-
-//Handlers:
-//function doLogin (req, res) => {}
-
-//function register (req, res) => {}
-
-//function showFullHistory (req, res) => {}
-
-//function showHistoryByDate (req, res) => {}
-
-//function showHistoryByUser (req, res) => {}
-
-//function showAllOrders (req, res) => {}
-
-//function showOneOrder (req, res) => {}
-
-//function createNewOrder (req, res) => {}
-
-//function updateOrder (req, res) => {}
-
-//function showAllProducts (req, res) => {}
-
-//function createNewProduct (req, res) => {}
-
-//function showOneProduct (req, res) => {}
-
-//function updateProduct (req, res) => {}
-
-//function deleteProduct (req, res) => {}
-
-//function showAllUsers (req, res) => {}
-
-//function showOneUser (req, res) => {}
-
-//function updateUser (req, res) => {}
-
-//function deleteUser (req, res) => {}
-
-//function getFavs (req, res) => {}
-
-
-//Middleware:
-//authentication
-//is admin

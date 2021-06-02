@@ -27,12 +27,6 @@ export const getAllCurrentOrders = async (request, response) => {
       if (userOrders.length === 0) {
 
         sendError404(response);
-        // response
-        //   .status(404)
-        //   .send({
-        //     status: "Nothing found",
-        //     message: "There are no active orders"
-        //   })
       } else {
         response.json(userOrders)
       }
@@ -43,12 +37,6 @@ export const getAllCurrentOrders = async (request, response) => {
       if (allOrders.length === 0) {
 
         sendError404(response);
-        // response
-        //   .status(404)
-        //   .send({
-        //     status: "Nothing found",
-        //     message: "There are no active orders"
-        //   })
       } else {
         response.json(allOrders)
       }
@@ -57,12 +45,6 @@ export const getAllCurrentOrders = async (request, response) => {
     console.log(error);
 
     sendError500(response);
-    // response
-    //   .status(500)
-    //   .json({
-    //     status: "Request failed",
-    //     message: "Internal server error"
-    //   })
   }
 }
 
@@ -77,12 +59,6 @@ export const getOrderById = async (request, response) => {
 
     if (order.length === 0) {
       sendError404(response);
-      // response
-      //   .status(404)
-      //   .send({
-      //     status: "Nothing found",
-      //     message: "No order with specified ID"
-      //   })
 
     } else {
 
@@ -93,23 +69,11 @@ export const getOrderById = async (request, response) => {
       } else if ((tokenInfo.is_admin === false) && (order[0].user_id !== tokenInfo.user_id)) {
 
         sendError403(response);
-        // response
-        //   .status(403)
-        //   .json({
-        //     status: "Request failed",
-        //     message: "User is not authorized to perform such action"
-        //   })
 
       } else if (tokenInfo.is_admin === true) {
 
         if (order.length === 0) {
           sendError404(response);
-          // response
-          //   .status(404)
-          //   .send({
-          //     status: "Nothing found",
-          //     message: "No order with specified ID"
-          //   })
         }else {
           response.json(order);
         }
@@ -120,12 +84,6 @@ export const getOrderById = async (request, response) => {
     console.log(error);
 
     sendError500(response);
-    // response
-    //   .status(500)
-    //   .json({
-    //     status: "Request failed",
-    //     message: "Internal server error"
-    //   })
   }
 }
 
@@ -139,23 +97,12 @@ export const updateStatus = async (request, response) => {
     if (!status) {
 
       sendError400(response);
-      // response
-      //   .status(400)
-      //   .send({
-      //     status: "Request failed",
-      //     message: "Invalid information provided"
-      //   });
+
     } else {
       const orderToUpdate = await getOrders(orderId);
 
       if (orderToUpdate.length === 0) {
         sendError404(response);
-        // response
-        //   .status(404)
-        //   .send({
-        //     status: "Nothing found",
-        //     message: "No order with specified ID"
-        //   });
 
       } else {
         await updateOrderStatus(status, orderId);
@@ -163,7 +110,7 @@ export const updateStatus = async (request, response) => {
         response
           .status(200)
           .send({
-            status: "Request successfull",
+            status: "Request successful",
             message: "Order status updated"
           });
       }
@@ -174,29 +121,14 @@ export const updateStatus = async (request, response) => {
     if (error.original.code === "WARN_DATA_TRUNCATED") {
 
       sendError400(response);
-      // response
-      //   .status(400)
-      //   .send({
-      //     status: "Request failed",
-      //     message: "Invalid information provided"
-      //   });
+
     } else {
 
       sendError500(response);
-      // response
-      //   .status(500)
-      //   .json({
-      //     status: "Request failed",
-      //     message: "Internal server error"
-      //   })
+
     }
-    // if ( error instanceof Sequelize.DatabaseError) {
-    //   for (let hola in error) {
-    //     console.log(hola);
-    //   }
   }
 }
-
 
 
 //CREATE NEW ORDER
@@ -216,64 +148,31 @@ export const createNewOrder = async (request, response) => {
   } catch (error) {
 
     console.log(error);
+    console.log(error.name);
 
-    if (error instanceof Sequelize.ValidationError) {
+    if (error.name === "SequelizeForeignKeyConstraintError") {
+      response
+      .status(400)
+      .json({
+        status: "Request failed",
+        message: "Incorrect product ID entered"
+      })
+
+    } else if (error instanceof Sequelize.ValidationError) {
       sendError400(response);
-      // response
-      //   .status(400)
-      //   .send({
-      //     status: "Request failed",
-      //     message: "Incorrect or missing information, please check all required fields"
-      //   });
 
     } else if ((error instanceof Sequelize.DatabaseError)) {
 
       if ((error.original.code === "WARN_DATA_TRUNCATED") || (error.original.code === "ER_TRUNCATED_WRONG_VALUE_FOR_FIELD")) {
         sendError400(response);
-        // response
-        //   .status(400)
-        //   .send({
-        //     status: "Request failed",
-        //     message: "Incorrect or missing information, please check all required fields"
-        //   });
       }
-
-    } else {
-
+      else {
+        sendError500(response);
+      }
+    }else {
       sendError500(response);
-      // response
-      //   .status(500)
-      //   .json({
-      //     status: "Request failed",
-      //     message: "Internal server error"
-      //   })
     }
   }
 }
 
 
-
-
-
-    // if (error.original.code === "WARN_DATA_TRUNCATED") {
-    //   response
-    //     .status(400)
-    //     .send({
-    //       status: "Request failed",
-    //       message: "Invalid information provided"
-    //     });
-    // }else if (error.original.code === "ER_TRUNCATED_WRONG_VALUE_FOR_FIELD") {
-    //   response
-    //     .status(400)
-    //     .send({
-    //       status: "Request failed",
-    //       message: "Invalid data type provided"
-    //     });
-    // }else {
-    //   response
-    //     .status(500)
-    //     .json({
-    //       status: "Request failed",
-    //       message: "Internal server error"
-    //     })
-    //}

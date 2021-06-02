@@ -36,7 +36,7 @@ export default async function connect() {
 
   await sequelize.sync({ force: false })
   }catch (error) {
-    console.error('Unable to connect to the database:', error);
+    console.error("Unable to connect to the database:", error);
     throw error;
   }
 }
@@ -127,7 +127,6 @@ export async function getUsers(filter = {}) {
   const User = DB_MODELS.User;
   const user =  User.findAll({
     where: filter,
-    attributes: { exclude: ['created_at', 'updated_at'] },
   });
   return user
 }
@@ -139,10 +138,10 @@ export async function getFavs(filter = {}) {
   const User = DB_MODELS.User;
   const userFavs = User.findAll({
     where: filter,
-    attributes: { exclude: ['id', 'created_at', 'updated_at', 'full_name', 'email', 'phone_number', 'password', 'is_admin', 'address']},
+    attributes: { exclude: ["id", "created_at", "updated_at", "full_name", "email", "phone_number", "password", "is_admin", "address"]},
     include: [{
       model: DB_MODELS.Product, as: "favourites",
-      attributes: { exclude: ["created_at", "updated_at", "description", "price", "ingredients", "is_disabled"]},
+      attributes: { exclude: ["created_at", "updated_at", "price", "ingredients"]},
       through: {
         attributes: []
       }
@@ -190,68 +189,13 @@ export async function createOrder(orderInfo) {
   const newOrder = await Order.create(
     orderInfo,
     {
-      attributes: { exclude: "updated_at"}, //ESTO NO FUNCIONA
+      attributes: { exclude: "updated_at"}, //ESTO NO FUNCIONA, VER SACAR ID TABLA INTERMEDIA
       include: [{
-        model: DB_MODELS.Orders_Products
+        model: DB_MODELS.Orders_Products,
+        attributes: { exclude: "updated_at"}
       }]
     }
   );
 
   return newOrder;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-//CREATE ORDER PRODUCTS
-// export async function addProductsToOrder(productsInfo/*array*/, orderId) {
-//   /** @type {Sequelize.Model} */
-  
-//   productsInfo.forEach(item => {
-//     item.order_id = orderId;
-//   });
-
-//   productsInfo.forEach(addItemToOrder);
-// }
-
-// async function addItemToOrder(item) {
-//   const Items = DB_MODELS.Orders_Products;
-//   console.log(item); //ACÁ DA ERROR SI SE AGREGA EL MISMO PRODUCTO MÁS DE UNA VEZ
-//   const orderItem = await Items.create(item);
-//   return orderItem
-// }
-
-
-//así estaba
-// export async function addProductsToOrder(productsInfo/*array*/, orderId) {
-//   /** @type {Sequelize.Model} */
-//   const Items = DB_MODELS.Orders_Products;
-//   productsInfo.order_id = orderId;
-//   console.log(productsInfo);
-//   const orderItems = await Items.create(productsInfo);
-//   return orderItems
-// }
-
-//POR SI SIRVE (????)
-// async function addItemToOrder() {
-//   const Items = DB_MODELS.Orders_Products;
-//   console.log(productsInfo[index]);
-//   const orderItems = await Items.create(productsInfo[index]);
-//   return orderItems
-// }, index
-
-  // productsInfo.forEach(item => async function() {
-  //   console.log(item);
-  //   const orderItems = await Items.create(item);
-    
-  //   return orderItems
-  // })
-//}

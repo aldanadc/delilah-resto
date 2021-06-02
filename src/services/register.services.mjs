@@ -24,23 +24,11 @@ export const createNewUser = async (request, response) => {
     console.log(error);
     if (error.name === "SequelizeValidationError") {
       sendError400(response);
-      // response
-      //   .status(400)
-      //   .json({
-      //     status: "Request failed",
-      //     message: "Incorrect or missing information, please check all required fields"
-      //   })
     } else {
       console.log(error);
 
       sendError500(response);
 
-      // response
-      //   .status(500)
-      //   .json({
-      //     status: "Request failed",
-      //     message: "Internal server error"
-      //   })
     }
   }
 }
