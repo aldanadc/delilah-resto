@@ -13,9 +13,23 @@ info:
 servers:
   - url: "https://localhost:8080/api/1.0.0"
     description: "Local server"
+tags:
+  - name: "Registration and users' log in"
+    description: "Operations for registration and log in"
+  - name: "Products"
+    description: "Operations on products"
+  - name: "Users"
+    description: "Operations on users"
+  - name: "Orders"
+    description: "Operations on current orders"
+  - name: "History"
+    description: "Operations on past orders"
+
 paths:
   /login:
     post:
+      tags:
+      - "Registration and users' log in"
       operationId: userIsLoggedIn
       summary: "Login to user account"
       description: "Allows an user to log into their account if they are a registered user"
@@ -47,6 +61,8 @@ paths:
 
   /register:
     post:
+      tags:
+      - "Registration and users' log in"
       operationId: createNewUser
       summary: "Create a new user"
       description: "Allows a new user to create an account provided they complete all the necessary information"
@@ -74,6 +90,8 @@ paths:
 
   /products:
     get:
+      tags:
+      - "Products"
       operationId: getAvailableProducts
       summary: "Fetch all available products"
       description: "Returns an array of objects with details of all the available products"
@@ -93,6 +111,8 @@ paths:
         "500":
           $ref: "#/components/responses/500DefaultError"
     post:
+      tags:
+      - "Products"
       operationId: createNewProduct
       summary: "Create a new product"
       description: "Allows an admin user to create a new product following a set structure and add it to the available products"
@@ -131,6 +151,8 @@ paths:
           description: "Numeric ID of the product to operate on"
           example: 3
     get:
+      tags:
+      - "Products"
       operationId: getOneProduct
       summary: "Returns the details of a product searching by its ID"
       responses:
@@ -149,6 +171,8 @@ paths:
         "500":
           $ref: "#/components/responses/500DefaultError"
     patch:
+      tags:
+      - "Products"
       operationId: updateOneProduct
       summary: "Update an existing product"
       description: "Allows an admin user to partially update the details for an existing product"
@@ -180,6 +204,8 @@ paths:
         "500":
           $ref: "#/components/responses/500DefaultError"
     delete:
+      tags:
+      - "Products"
       operationId: deleteAProduct
       summary: "Delete an existing product"
       description: "Allows an admin user to delete an existing product by using its ID as path parameter"
@@ -197,6 +223,8 @@ paths:
 
   /products/disabled:
     get:
+      tags:
+      - "Products"
       operationId: getDisabledProducts
       summary: "Returns products currently disabled"
       description: "Returns a list of objects with information about the products currently set as disabled. Only admin users can see this information"
@@ -220,6 +248,8 @@ paths:
 
   /users:
     get:
+      tags:
+      - "Users"
       operationId: getAllUsers
       summary: "Returns the information for all registered users"
       description: "Returns a list of objects with details of all registered users. Only admin users can see this information"
@@ -249,6 +279,8 @@ paths:
           description: "Numeric ID of the user to operate on"
           example: 3
     get:
+      tags:
+      - "Users"
       operationId: getOneUser
       summary: "Returns information about a specified user"
       description: "Returns a list with an object with the details of the requested user. A non-admin user will only get a successful response if they are asking for their own information"
@@ -270,6 +302,8 @@ paths:
         "500":
           $ref: "#/components/responses/500DefaultError"
     patch:
+      tags:
+      - "Users"
       operationId: modifyMyUser
       summary: "Update information for an existing user"
       description: "Allows registered users to update their stored information. All users can only update their own details "
@@ -301,6 +335,8 @@ paths:
         "500":
           $ref: "#/components/responses/500DefaultError"
     delete:
+      tags:
+      - "Users"
       operationId: deleteUserAccount
       summary: "Delete an existing user"
       description: "Allows all users to delete their own user account"
@@ -316,6 +352,8 @@ paths:
 
   /users/{user_id}/favs:
     get:
+      tags:
+      - "Users"
       operationId: getUserFavs
       summary: "Returns information about an user's favourites products"
       description: "Returns an array of objects with the specified user's id, username and an array containing their associated favourite products. An admin user can see everybody's favourites but a non-admin user can only see their own"
@@ -345,6 +383,8 @@ paths:
 
   /orders:
     get:
+      tags:
+      - "Orders"
       operationId: getAllCurrentOrders
       summary: "Returns information about current day's orders"
       description: "For admin users, returns an array of objects containing the restaurant's current day's orders, from 00hs to 23.59hs. For non-admin users, it returns the orders they placed on that day if they have any. The products associated to each order are also included in the order's information"
@@ -364,6 +404,8 @@ paths:
         "500":
           $ref: "#/components/responses/500DefaultError"
     post:
+      tags:
+      - "Orders"
       operationId: createNewOrder
       summary: "Create a new order"
       description: "Allows a registered user to send a new order to the restaurant, choosing the products they want and the payment method"
@@ -398,6 +440,8 @@ paths:
           description: "Numeric ID of the order to operate on"
           example: 5
     get:
+      tags:
+      - "Orders"
       operationId: getOrderById
       summary: "Get an order's details"
       description: "Returns an object with information about the specified order's details. A non-admin user can only see the information if they were the ones that placed the order"
@@ -419,6 +463,8 @@ paths:
         "500":
           $ref: "#/components/responses/500DefaultError"
     patch:
+      tags:
+      - "Orders"
       operationId: updateStatus
       summary: "Update an order's status"
       description: "Allows an admin user to update the specified order's status, following one of the pre-set stages"
@@ -456,6 +502,8 @@ paths:
         
   /history:
     get:
+      tags:
+      - "History"
       operationId: getHistory
       summary: "Returns information about all of the orders for the restaurant"
       description: "Returns a list of objects containing information about all the orders placed to the restaurant.  If the user is non-admin, they will only see the orders they placed"
@@ -477,6 +525,8 @@ paths:
 
   /history/{date}:
     get:
+      tags:
+      - "History"
       operationId: getHistoryByDate
       summary: "Returns information about orders placed on a specified date"
       description: "Returns a list of objects containing information about the specified date's orders."
@@ -509,6 +559,8 @@ paths:
   
   /history/user/{user_id}:
     get:
+      tags:
+      - "History"
       operationId: getUserHistory
       summary: "Returns information about a user's order history"
       description: "Returns a list of objects containing information about the specified user's order history. Only admin users can access this content"
