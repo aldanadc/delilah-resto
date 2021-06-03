@@ -11,13 +11,23 @@ info:
   license:
     name: "ISC"
 servers:
-  - url: "http://localhost:8080/api/1.0.0"
+  - url: "https://localhost:8080/api/1.0.0"
     description: "Local server"
 paths:
   /login:
     post:
       summary: "Login to user account"
       description: "Allows an user to log into their account if they are a registered user"
+      requestBody:
+        description: "User's log in information"
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: "#/components/schemas/LogIn"
+            example:
+              username: "queen_freddie"
+              password: "Eeeeeeoo123"
       responses:
         "200":
           $ref: "#/components/responses/200Success"
@@ -28,6 +38,7 @@ paths:
           $ref: "#/components/responses/401NotAuthenticated"
         "500":
           $ref: "#/components/responses/500DefaultError"
+      security: []
 
   /register:
     post:
@@ -52,6 +63,7 @@ paths:
           $ref: "#/components/responses/400BadRequest"
         "500":
           $ref: "#/components/responses/500DefaultError"
+      security: []
 
   /products:
     get:
@@ -136,8 +148,11 @@ paths:
         required: true
         content:
           application/json:
-              example:
-                price: 399.99
+            schema:
+              $ref: "#/components/schemas/Product"
+            example:
+              price: 399.99
+              is_disabled: false
       responses:
         "200": 
           $ref: "#/components/responses/200Success"
@@ -221,6 +236,7 @@ paths:
           schema:
             type: string
           description: "Numeric ID of the user to operate on"
+          example: 3
     get:
       summary: "Returns information about a specified user"
       description: "Returns a list with an object with the details of the requested user. A non-admin user will only get a successful response if they are asking for their own information"
@@ -388,14 +404,18 @@ paths:
         content:
           application/json:
               schema:
-                type: string
-                enum:
-                  - "new"
-                  - "confirmed"
-                  - "preparing"
-                  - "sending"
-                  - "cancelled"
-                  - "delivered"
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                      - "new"
+                      - "confirmed"
+                      - "preparing"
+                      - "sending"
+                      - "cancelled"
+                      - "delivered"
+              
       responses:
         "204": 
           description: "Order status updated"
@@ -468,6 +488,7 @@ paths:
           schema:
             type: string
           description: "Numeric ID of the user to fetch history for"
+          example: 3
       responses:
         "200": 
           $ref: "#/components/responses/200Success"
@@ -481,8 +502,16 @@ paths:
           $ref: "#/components/responses/404NotFound"
         "500":
           $ref: "#/components/responses/500DefaultError"
-  
+
+security:
+  - tokenAuth: []
+
 components:
+  securitySchemes:
+    tokenAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     Product:
       type: object
@@ -570,6 +599,13 @@ components:
           format: password
         is_admin:
           type: boolean
+    LogIn: 
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
     OrderItem:
       type: object
       properties:
