@@ -7,8 +7,8 @@ import { getHistory, getUserHistory, getHistoryByDate } from "../services/histor
 export function getRouter() {
   const router = new Router();
   router.get("/history", verifyToken, getHistory);
-  router.get("/history/user/:user_id", verifyToken, verifyIfAdmin, getUserHistory);
   router.get("/history/:date", verifyToken, verifyIfAdmin, checkIfValidDate, getHistoryByDate);
+  router.get("/history/user/:user_id", verifyToken, verifyIfAdmin, getUserHistory);
   return router;
 }
 

@@ -28,7 +28,7 @@ export const createNewProduct = async (request, response) => {
 };
 
 //GET ALL AVAILABLE PRODUCTS
-export const getAllProducts = async (request, response) => {
+export const getAvailableProducts = async (request, response) => {
   try {
     const allProducts = await getProducts({ is_disabled: false });
 

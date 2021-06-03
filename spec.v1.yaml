@@ -16,6 +16,7 @@ servers:
 paths:
   /login:
     post:
+      operationId: userIsLoggedIn
       summary: "Login to user account"
       description: "Allows an user to log into their account if they are a registered user"
       requestBody:
@@ -46,6 +47,7 @@ paths:
 
   /register:
     post:
+      operationId: createNewUser
       summary: "Create a new user"
       description: "Allows a new user to create an account provided they complete all the necessary information"
       requestBody:
@@ -72,6 +74,7 @@ paths:
 
   /products:
     get:
+      operationId: getAvailableProducts
       summary: "Fetch all available products"
       description: "Returns an array of objects with details of all the available products"
       responses:
@@ -90,6 +93,7 @@ paths:
         "500":
           $ref: "#/components/responses/500DefaultError"
     post:
+      operationId: createNewProduct
       summary: "Create a new product"
       description: "Allows an admin user to create a new product following a set structure and add it to the available products"
       requestBody:
@@ -127,6 +131,7 @@ paths:
           description: "Numeric ID of the product to operate on"
           example: 3
     get:
+      operationId: getOneProduct
       summary: "Returns the details of a product searching by its ID"
       responses:
         "200":
@@ -144,6 +149,7 @@ paths:
         "500":
           $ref: "#/components/responses/500DefaultError"
     patch:
+      operationId: updateOneProduct
       summary: "Update an existing product"
       description: "Allows an admin user to partially update the details for an existing product"
       requestBody:
@@ -174,6 +180,7 @@ paths:
         "500":
           $ref: "#/components/responses/500DefaultError"
     delete:
+      operationId: deleteAProduct
       summary: "Delete an existing product"
       description: "Allows an admin user to delete an existing product by using its ID as path parameter"
       responses:
@@ -190,6 +197,7 @@ paths:
 
   /products/disabled:
     get:
+      operationId: getDisabledProducts
       summary: "Returns products currently disabled"
       description: "Returns a list of objects with information about the products currently set as disabled. Only admin users can see this information"
       responses:
@@ -212,6 +220,7 @@ paths:
 
   /users:
     get:
+      operationId: getAllUsers
       summary: "Returns the information for all registered users"
       description: "Returns a list of objects with details of all registered users. Only admin users can see this information"
       responses:
@@ -240,6 +249,7 @@ paths:
           description: "Numeric ID of the user to operate on"
           example: 3
     get:
+      operationId: getOneUser
       summary: "Returns information about a specified user"
       description: "Returns a list with an object with the details of the requested user. A non-admin user will only get a successful response if they are asking for their own information"
       responses:
@@ -260,36 +270,38 @@ paths:
         "500":
           $ref: "#/components/responses/500DefaultError"
     patch:
-        summary: "Update information for an existing user"
-        description: "Allows registered users to update their stored information. All users can only update their own details "
-        requestBody:
-          description: "User's new information"
-          required: true
+      operationId: modifyMyUser
+      summary: "Update information for an existing user"
+      description: "Allows registered users to update their stored information. All users can only update their own details "
+      requestBody:
+        description: "User's new information"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+            example:
+              address: "10 Downing Street, London SW1A 2AB, UK"
+              phone_number: "+446565605898"
+      responses:
+        "200":
+          description: "Request sucessful"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
               example:
-                address: "10 Downing Street, London SW1A 2AB, UK"
-                phone_number: "+446565605898"
-        responses:
-          "200":
-            description: "Request sucessful"
-            content:
-              application/json:
-                schema:
-                  $ref: "#/components/schemas/User"
-                example:
-                  $ref: "#/components/examples/User"
-          "400":
-            $ref: "#/components/responses/400BadRequest"
-          "401": 
-            $ref: "#/components/responses/401NotAuthenticated"
-          "403": 
-            $ref: "#/components/responses/403Forbidden"
-          "500":
-            $ref: "#/components/responses/500DefaultError"
+                $ref: "#/components/examples/User"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401": 
+          $ref: "#/components/responses/401NotAuthenticated"
+        "403": 
+          $ref: "#/components/responses/403Forbidden"
+        "500":
+          $ref: "#/components/responses/500DefaultError"
     delete:
+      operationId: deleteUserAccount
       summary: "Delete an existing user"
       description: "Allows all users to delete their own user account"
       responses:
@@ -304,6 +316,7 @@ paths:
 
   /users/{user_id}/favs:
     get:
+      operationId: getUserFavs
       summary: "Returns information about an user's favourites products"
       description: "Returns an array of objects with the specified user's id, username and an array containing their associated favourite products. An admin user can see everybody's favourites but a non-admin user can only see their own"
       parameters:
@@ -332,6 +345,7 @@ paths:
 
   /orders:
     get:
+      operationId: getAllCurrentOrders
       summary: "Returns information about current day's orders"
       description: "For admin users, returns an array of objects containing the restaurant's current day's orders, from 00hs to 23.59hs. For non-admin users, it returns the orders they placed on that day if they have any. The products associated to each order are also included in the order's information"
       responses:
@@ -350,6 +364,7 @@ paths:
         "500":
           $ref: "#/components/responses/500DefaultError"
     post:
+      operationId: createNewOrder
       summary: "Create a new order"
       description: "Allows a registered user to send a new order to the restaurant, choosing the products they want and the payment method"
       requestBody:
@@ -383,6 +398,7 @@ paths:
           description: "Numeric ID of the order to operate on"
           example: 5
     get:
+      operationId: getOrderById
       summary: "Get an order's details"
       description: "Returns an object with information about the specified order's details. A non-admin user can only see the information if they were the ones that placed the order"
       responses:
@@ -403,6 +419,7 @@ paths:
         "500":
           $ref: "#/components/responses/500DefaultError"
     patch:
+      operationId: updateStatus
       summary: "Update an order's status"
       description: "Allows an admin user to update the specified order's status, following one of the pre-set stages"
       requestBody:
@@ -439,6 +456,7 @@ paths:
         
   /history:
     get:
+      operationId: getHistory
       summary: "Returns information about all of the orders for the restaurant"
       description: "Returns a list of objects containing information about all the orders placed to the restaurant.  If the user is non-admin, they will only see the orders they placed"
       responses:
@@ -459,6 +477,7 @@ paths:
 
   /history/{date}:
     get:
+      operationId: getHistoryByDate
       summary: "Returns information about orders placed on a specified date"
       description: "Returns a list of objects containing information about the specified date's orders."
       parameters:
@@ -490,6 +509,7 @@ paths:
   
   /history/user/{user_id}:
     get:
+      operationId: getUserHistory
       summary: "Returns information about a user's order history"
       description: "Returns a list of objects containing information about the specified user's order history. Only admin users can access this content"
       parameters:
