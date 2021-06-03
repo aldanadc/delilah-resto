@@ -25,9 +25,9 @@ paths:
           application/json:
             schema:
                 $ref: "#/components/schemas/LogIn"
-            # example:
-            #   username: "queen_freddie"
-            #   password: "Eeeeeeoo123"
+            example:
+              username: "queen_freddie"
+              password: "Eeeeeeoo123"
       responses:
         "200":
           description: "Request sucessful"
