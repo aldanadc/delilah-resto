@@ -1,6 +1,7 @@
 import { createUser, DB_MODELS } from "../config/db.mjs";
 import { sendError400, sendError500 } from "./errors.services.mjs";
 
+
 export const createNewUser = async (request, response) => {
   const newUserInfo = request.body;
   const newUsername = request.body.username;

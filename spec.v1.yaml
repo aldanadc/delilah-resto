@@ -14,8 +14,8 @@ servers:
   - url: "https://localhost:8080/api/1.0.0"
     description: "Local server"
 tags:
-  - name: "Registration and users' log in"
-    description: "Operations for registration and log in"
+  - name: "Registration and log in"
+    description: "Operations for users' registration and log in"
   - name: "Products"
     description: "Operations on products"
   - name: "Users"
@@ -29,7 +29,7 @@ paths:
   /login:
     post:
       tags:
-      - "Registration and users' log in"
+      - "Registration and log in"
       operationId: userIsLoggedIn
       summary: "Login to user account"
       description: "Allows an user to log into their account if they are a registered user"
@@ -62,7 +62,7 @@ paths:
   /register:
     post:
       tags:
-      - "Registration and users' log in"
+      - "Registration and log in"
       operationId: createNewUser
       summary: "Create a new user"
       description: "Allows a new user to create an account provided they complete all the necessary information"

@@ -27,6 +27,7 @@ export const createNewProduct = async (request, response) => {
   }
 };
 
+
 //GET ALL AVAILABLE PRODUCTS
 export const getAvailableProducts = async (request, response) => {
   try {
@@ -36,7 +37,7 @@ export const getAvailableProducts = async (request, response) => {
 
       sendError404(response);
 
-    }else {
+    } else {
       response.json(allProducts);
     }
 
@@ -47,6 +48,7 @@ export const getAvailableProducts = async (request, response) => {
   }
 }
 
+
 //GET DISABLED PRODUCTS
 export const getDisabledProducts = async (request, response) => {
   try {
@@ -56,7 +58,7 @@ export const getDisabledProducts = async (request, response) => {
 
       sendError404(response);
 
-    }else {
+    } else {
       response.json(disabledProducts);
     }
 
@@ -66,6 +68,7 @@ export const getDisabledProducts = async (request, response) => {
     sendError500(response);
   }
 }
+
 
 //GET ONE PRODUCT
 export const getOneProduct = async (request, response) => {
@@ -85,6 +88,7 @@ export const getOneProduct = async (request, response) => {
     sendError500(response);
   }
 }
+
 
 //UPDATE ONE PRODUCT
 export const updateOneProduct = async (request, response) => {
@@ -115,6 +119,7 @@ export const updateOneProduct = async (request, response) => {
   }
 }
 
+
 //DELETE ONE PRODUCT
 export const deleteAProduct = async (request, response) => {
   const productId = request.params;
@@ -128,7 +133,7 @@ export const deleteAProduct = async (request, response) => {
 
     } else {
       await deleteProduct(productId);
-      
+
       response
         .status(204)
         .json({
@@ -137,7 +142,7 @@ export const deleteAProduct = async (request, response) => {
         })
     }
 
-    
+
   } catch (error) {
 
     console.log(error);

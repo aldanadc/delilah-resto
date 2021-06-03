@@ -5,7 +5,6 @@ import { sendError404, sendError500 } from "./errors.services.mjs";
 const Op = Sequelize.Op;
 
 
-
 export const getHistory = async (request, response) => {
   const token = request.headers.authorization.replace("Bearer ", "");
   const tokenInfo = jwt.decode(token);
@@ -66,27 +65,27 @@ export const getHistoryByDate = async (request, response) => {
   const endOfDay = new Date(date);
   endOfDay.setHours(endOfDay.getHours() + 24);
 
-    try {
-      const dateHistory = await getOrders({
-        created_at: {
-          [Op.lt]: endOfDay, //menor que final del día
-          [Op.gte]: date //mayor que ese día a las 00
-        }
-      });
-
-      if (dateHistory.length === 0) {
-
-        sendError404(response);
-      } else {
-        response.json(dateHistory)
+  try {
+    const dateHistory = await getOrders({
+      created_at: {
+        [Op.lt]: endOfDay, //menor que final del día
+        [Op.gte]: date //mayor que ese día a las 00
       }
-    } catch (error) {
-      console.log(error);
+    });
 
-      sendError500(response);
+    if (dateHistory.length === 0) {
 
+      sendError404(response);
+    } else {
+      response.json(dateHistory)
     }
+  } catch (error) {
+    console.log(error);
+
+    sendError500(response);
+
   }
+}
 
 
 

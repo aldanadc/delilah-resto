@@ -4,6 +4,7 @@ import { getOrders, updateOrderStatus, createOrder } from "../config/db.mjs";
 import { sendError400, sendError403, sendError404, sendError500 } from "./errors.services.mjs";
 const Op = Sequelize.Op;
 
+
 //GET ALL CURRENT ORDERS
 export const getAllCurrentOrders = async (request, response) => {
   const token = request.headers.authorization.replace("Bearer ", "");
@@ -48,6 +49,7 @@ export const getAllCurrentOrders = async (request, response) => {
   }
 }
 
+
 //GET ONE ORDER BY ITS ID, ONLY ADMIN OR USER WHO MADE THE ORDER
 export const getOrderById = async (request, response) => {
   const token = request.headers.authorization.replace("Bearer ", "");
@@ -74,7 +76,7 @@ export const getOrderById = async (request, response) => {
 
         if (order.length === 0) {
           sendError404(response);
-        }else {
+        } else {
           response.json(order);
         }
       }
@@ -152,11 +154,11 @@ export const createNewOrder = async (request, response) => {
 
     if (error.name === "SequelizeForeignKeyConstraintError") {
       response
-      .status(400)
-      .json({
-        status: "Request failed",
-        message: "Incorrect product ID entered"
-      })
+        .status(400)
+        .json({
+          status: "Request failed",
+          message: "Incorrect product ID entered"
+        })
 
     } else if (error instanceof Sequelize.ValidationError) {
       sendError400(response);
@@ -169,7 +171,7 @@ export const createNewOrder = async (request, response) => {
       else {
         sendError500(response);
       }
-    }else {
+    } else {
       sendError500(response);
     }
   }

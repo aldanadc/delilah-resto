@@ -11,7 +11,7 @@ import { getRouter as getUsersRouter } from "./routers/users.router.mjs";
 
 function loadMiddlewares(server) {
   server.use(json());
-  server.use(urlencoded( {extended: true} ));
+  server.use(urlencoded({ extended: true }));
 }
 
 function loadRouters(server) {
@@ -21,7 +21,7 @@ function loadRouters(server) {
   const productsRouter = getProductsRouter();
   const registerRouter = getRegisterRouter();
   const usersRouter = getUsersRouter();
-  
+
   server.use("/api/1.0.0", loginRouter);
   server.use("/api/1.0.0", registerRouter);
   server.use("/api/1.0.0", usersRouter);

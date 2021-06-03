@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import { getUsers, getFavs, deleteUser, updateUser } from "../config/db.mjs";
 import { sendError404, sendError500 } from "./errors.services.mjs";
 
+
 //READ ALL USERS
 export const getAllUsers = async (request, response) => {
   try {
@@ -20,6 +21,7 @@ export const getAllUsers = async (request, response) => {
 
   }
 }
+
 
 //READ ONE USER
 export const getOneUser = async (request, response) => {

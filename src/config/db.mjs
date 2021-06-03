@@ -41,6 +41,7 @@ export default async function connect() {
   }
 }
 
+
 //VALIDATE USER
 export async function validateUserAgainstDB(username, password) {
   /** @type {Sequelize.Model} */
@@ -54,6 +55,7 @@ export async function validateUserAgainstDB(username, password) {
   return user;
 }
 
+
 //PRODUCTS
 export async function getProducts(filter = {}) {
   /** @type {Sequelize.Model} */
@@ -65,12 +67,14 @@ export async function getProducts(filter = {}) {
   return product
 }
 
+
 export async function createProduct(productInfo) {
   /** @type {Sequelize.Model} */
   const Product = DB_MODELS.Product;
   const newProduct = await Product.create(productInfo);
   return newProduct;
 }
+
 
 export async function deleteProduct(filter = {}) {
   /** @type {Sequelize.Model} */
@@ -81,6 +85,7 @@ export async function deleteProduct(filter = {}) {
     
   return deletedProduct
 }
+
 
 export async function updateProduct(updatedInfo, filter = {}) {
   /** @type {Sequelize.Model} */
@@ -101,6 +106,7 @@ export async function createUser(userInfo) {
   return newUser;
 }
 
+
 export async function deleteUser(filter = {}) {
   /** @type {Sequelize.Model} */
   const User = DB_MODELS.User;
@@ -110,6 +116,7 @@ export async function deleteUser(filter = {}) {
     
   return deletedUser
 }
+
 
 export async function updateUser(updatedInfo, filter = {}) {
   /** @type {Sequelize.Model} */
@@ -168,6 +175,7 @@ export async function getOrders(filter = {}) {
   });
   return order
 }
+
 
 //UPDATE ORDER STATUS
 export async function updateOrderStatus(updatedStatus, filter = {}) {
