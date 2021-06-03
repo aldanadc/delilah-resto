@@ -21,6 +21,9 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/200Success"
+          description: "User token"
+          content:
+          application/json:
         "401":
           $ref: "#/components/responses/401NotAuthenticated"
         "500":
@@ -36,12 +39,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/User"
+              $ref: "#/components/schemas/newUser"
             example:
-              $ref: "#/components/examples/User"
+              $ref: "#/components/examples/newUser"
       responses:
         "201":
           $ref: "#/components/responses/201Created"
+          description: "New user's object which was created"
+          content:
+          application/json:
         "400":
           $ref: "#/components/responses/400BadRequest"
         "500":
@@ -49,7 +55,8 @@ paths:
 
   /products:
     get:
-      summary: "Returns an array of objects with information for all the available products"
+      summary: "Fetch all available products"
+      description: "Returns an array of objects with details of all the available products"
       responses:
         "200":
           $ref: "#/components/responses/200Success"
@@ -74,7 +81,7 @@ paths:
         content:
           application/json:
               schema:
-                $ref: "#/components/schemas/Product"
+                $ref: "#/components/schemas/NewProduct"
       responses:
         "201": 
           $ref: "#/components/responses/201Created"
@@ -83,6 +90,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Product"
+              example:
+                $ref: "#/components/examples/NewProduct"
         "400":
           $ref: "#/components/responses/400BadRequest"
         "401": 
@@ -99,11 +108,14 @@ paths:
           required: true
           schema:
             type: string
+          description: "Numeric ID of the product to operate on"
+          example: 3
     get:
       summary: "Returns the details of a product searching by its ID"
       responses:
         "200":
           $ref: "#/components/responses/200Success"
+          description: "Details of the fetched product"
           content:
             application/json:
               schema:
@@ -146,7 +158,7 @@ paths:
           $ref: "#/components/responses/500DefaultError"
     delete:
       summary: "Delete an existing product"
-      description: "Allows an admin user to delete an existing product"
+      description: "Allows an admin user to delete an existing product by using its ID as path parameter"
       responses:
         "204":
           description: "Product deleted"
@@ -166,12 +178,13 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/200Success"
+          description: "Details of the currently disabled products"
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Product"
+                $ref: "#/components/schemas/Products"
               example:  
-                $ref: "#/components/examples/Product"
+                $ref: "#/components/examples/Products"
         "401": 
           $ref: "#/components/responses/401NotAuthenticated"
         "403": 
@@ -188,6 +201,7 @@ paths:
       responses:
         "200": 
           $ref: "#/components/responses/200Success"
+          description: "Details of the registered users"
           content:
             application/json:
               schema:
@@ -206,12 +220,14 @@ paths:
           required: true
           schema:
             type: string
+          description: "Numeric ID of the user to operate on"
     get:
       summary: "Returns information about a specified user"
       description: "Returns a list with an object with the details of the requested user. A non-admin user will only get a successful response if they are asking for their own information"
       responses:
         "200": 
           $ref: "#/components/responses/200Success"
+          description: "Details of the specified user"
           content:
             application/json:
               schema:
@@ -240,6 +256,13 @@ paths:
         responses:
           "200": 
             $ref: "#/components/responses/200Success"
+            description: "Details of the user after its update"
+            content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+              example:
+                $ref: "#/components/examples/User"
           "400":
             $ref: "#/components/responses/400BadRequest"
           "401": 
@@ -271,15 +294,13 @@ paths:
           required: true
           schema:
             type: string
+          description: "Numeric ID of the user to operate on"
+          example: 5
       responses:
         "200": 
           $ref: "#/components/responses/200Success"
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/Products"
-              example:  
-                $ref: "#/components/examples/Products"
         "401": 
           $ref: "#/components/responses/401NotAuthenticated"
         "403": 
@@ -315,12 +336,13 @@ paths:
         content:
           application/json:
               schema:
-                $ref: "#/components/schemas/Order"
+                $ref: "#/components/schemas/NewOrder"
               example:
-                $ref: "#/components/examples/Order"
+                $ref: "#/components/examples/NewOrder"
       responses:
         "201":
           $ref: "#/components/responses/201Created"
+          description: "Details of the order sent"
         "400":
           $ref: "#/components/responses/400BadRequest"
         "401": 
@@ -335,6 +357,8 @@ paths:
           required: true
           schema:
             type: integer
+          description: "Numeric ID of the order to operate on"
+          example: 5
     get:
       summary: "Get an order's details"
       description: "Returns an object with information about the specified order's details. A non-admin user can only see the information if they were the ones that placed the order"
@@ -404,15 +428,17 @@ paths:
         "500":
           $ref: "#/components/responses/500DefaultError"
 
-  /history/:date:
+  /history/{date}:
     get:
       summary: "Returns information about orders placed on a specified date"
       description: "Returns a list of objects containing information about the specified date's orders. The array will be empty if no orders were place that day"
       parameters:
-        - in: query
+        - in: path
           name: date
+          required: true
           schema:
             type: string
+          description: "Date used to fetch orders' history in format YYYY,MM,DD"
           example:
             "2021,04,05"
       responses:
@@ -441,6 +467,7 @@ paths:
           required: true
           schema:
             type: string
+          description: "Numeric ID of the user to fetch history for"
       responses:
         "200": 
           $ref: "#/components/responses/200Success"
@@ -478,11 +505,55 @@ components:
       type: array
       items:
         $ref: "#/components/schemas/Product"
+    NewProduct:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        image:
+          type: string
+        ingredients:
+          type: string
+        price:
+          type: number
+        is_disabled:
+          type: boolean
     User: 
       type: object
       properties:
         user_id:
           type: number
+        username:
+          type: string
+        full_name:
+          type: string
+        email:
+          type: string
+          format: email
+        phone_number:
+          type: string
+        address:
+          type: string
+        password:
+          type: string
+          format: password
+        is_admin:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Users:
+      type: array
+      items:
+        $ref: "#/components/schemas/User"
+    newUser: 
+      type: object
+      properties:
         username:
           type: string
         full_name:
@@ -499,26 +570,29 @@ components:
           format: password
         is_admin:
           type: boolean
-    Users:
-      type: array
-      items:
-        $ref: "#/components/schemas/User"
     OrderItem:
       type: object
       properties:
         product_id:
           type: number
+        name:
+          type: string
+        image:
+          type: string
         price:
           type: number
           format: float
-        quantity:
-          type: integer
+        order_products:
+          type: object
+          properties:
+            product_qty:
+              type: integer
     Order:
       type: object
       properties:
         order_id:
           type: integer
-        order_status:
+        status:
           type: string
           enum:
             - "new"
@@ -527,30 +601,38 @@ components:
             - "on its way"
             - "cancelled"
             - "delivered"
-        order_date:
-          type: string
-          format: date-time
-        products:
-          type: array
-          items:
-            $ref: "#/components/schemas/OrderItem" 
-        total: 
-          type: number
-          format: float
         payment_method:
           type: string
-        delivery_address:
+        created_at:
           type: string
-        customer_name:
+          format: date-time
+        updated_at:
           type: string
-        customer_email:
-          type: string
-        customer_phone:
-          type: string
+          format: date-time
+        user_id:
+          type: integer
+        order_items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItem"
     Orders:
       type: array
       items:
         $ref: "#/components/schemas/Order"
+    NewOrder:
+      type: object
+      properties:
+        payment_method:
+          type: string
+        orders_products:
+          type: array
+          items:
+            type: object
+            properties:
+              product_qty:
+                type: number
+              product_id:
+                type: number
     Error:
       type: object
       properties:
@@ -567,11 +649,11 @@ components:
     201Created:
       description: "Resource created"
     400BadRequest:
-      description: "Incorrect or missing information, please check all required fields"
+      description: "Incorrect or missing information provided"
     401NotAuthenticated:
-      description: "Invalid login information"
+      description: "Invalid or missing credentials"
     403Forbidden:
-      description: "User is not authorized to perform such action"
+      description: "Forbidden action. The user is not authorized to perform the request"
     404NotFound:
       description: "The requested resource does not exist"
     500DefaultError:
@@ -592,19 +674,40 @@ components:
         is_disabled: false
     Products:
       value:
-        - name: "Tacos al pastor"
+        - product_id: 1
+          name: "Tacos al pastor"
           description: "Delicious taco with marinated pork and veal meat, with roasted and fresh vegetables, seasoning and hot sauce"
           ingredients: "pork and veal meat, hot chili, garlic, onion, cilantro leaves, cumin, salt, pineapple, corn tortilla"
           price: 349.99
           is_disabled: false
-        - name: "Carnitas burrito"
+        - product_id: 2
+          name: "Carnitas burrito"
           description: "Our star burrito, made with marinated pork meat, roasted and fresh vegetables, black beans, cheese and white rice, seasoned with our delicious hot sauce"
           ingredients: "marinated pork meat, white rice, black beans, onion, tomato, lettuce, cilantro leaves, hot chili, avocado, salt, corn tortilla"
           price: 379.99
           is_disabled: true
+    NewProduct:
+      value:
+        name: "Tacos al pastor"
+        description: "Delicious taco with marinated pork and veal meat, with roasted vegetables, seasoning and hot sauce"
+        image: "http://imagendetacos.com"
+        ingredients: "pork and veal meat, hot chili, garlic, onion, cilantro leaves, cumin, salt, pineapple, corn tortilla"
+        price: 349.99
+        is_disabled: false
     User:
       value:
-        user_id: 1,
+        user_id: 3
+        username: "queen_freddie"
+        full_name: "Freddie Mercury"
+        email: "freddiemercury@gmail.com"
+        phone_number: "+447712345678"
+        address: "1 Logan Pl, Kensington, London, W8 6DE, UK"
+        password: "Eeeeeeoo123"
+        is_admin: false
+        created_at: "2021-05-05T16:18:11.000Z"
+        updated_at: "2021-05-05T16:18:11.000Z"
+    newUser:
+      value:
         username: "queen_freddie"
         full_name: "Freddie Mercury"
         email: "freddiemercury@gmail.com"
@@ -627,8 +730,11 @@ components:
             price: 349.99
             order_products: 
               - product_qty: 1
-        
-        delivery_address: "1 Logan Pl, Kensington, London, W8 6DE, UK"
-        customer_name: "Freddie Mercury"
-        customer_email: "freddiemercury@gmail.com"
-        customer_phone: "+447712345678"
+    NewOrder:
+      value:
+        payment_method: "cash"
+        order_products:
+          - product_qty: 2
+            product_id: 3
+          - product_qty: 2
+            product_id: 1
