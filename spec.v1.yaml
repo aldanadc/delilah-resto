@@ -30,10 +30,14 @@ paths:
               password: "Eeeeeeoo123"
       responses:
         "200":
-          $ref: "#/components/responses/200Success"
-          description: "User token"
+          description: "Request sucessful"
           content:
-          application/json:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
         "401":
           $ref: "#/components/responses/401NotAuthenticated"
         "500":
@@ -55,10 +59,11 @@ paths:
               $ref: "#/components/examples/newUser"
       responses:
         "201":
-          $ref: "#/components/responses/201Created"
-          description: "New user's object which was created"
+          description: "Resource created"
           content:
-          application/json:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
         "400":
           $ref: "#/components/responses/400BadRequest"
         "500":
@@ -71,7 +76,7 @@ paths:
       description: "Returns an array of objects with details of all the available products"
       responses:
         "200":
-          $ref: "#/components/responses/200Success"
+          description: "Request sucessful"
           content:
             application/json:
               schema:
@@ -96,8 +101,7 @@ paths:
                 $ref: "#/components/schemas/NewProduct"
       responses:
         "201": 
-          $ref: "#/components/responses/201Created"
-          description: "Details of the newly created product"
+          description: "Resource created"
           content:
             application/json:
               schema:
@@ -126,8 +130,7 @@ paths:
       summary: "Returns the details of a product searching by its ID"
       responses:
         "200":
-          $ref: "#/components/responses/200Success"
-          description: "Details of the fetched product"
+          description: "Request sucessful"
           content:
             application/json:
               schema:
@@ -155,8 +158,7 @@ paths:
               is_disabled: false
       responses:
         "200": 
-          $ref: "#/components/responses/200Success"
-          description: "Details of the product after its update"
+          description: "Request sucessful"
           content:
             application/json:
               schema:
@@ -192,8 +194,7 @@ paths:
       description: "Returns a list of objects with information about the products currently set as disabled. Only admin users can see this information"
       responses:
         "200":
-          $ref: "#/components/responses/200Success"
-          description: "Details of the currently disabled products"
+          description: "Request sucessful"
           content:
             application/json:
               schema:
@@ -215,8 +216,7 @@ paths:
       description: "Returns a list of objects with details of all registered users. Only admin users can see this information"
       responses:
         "200": 
-          $ref: "#/components/responses/200Success"
-          description: "Details of the registered users"
+          description: "Request sucessful"
           content:
             application/json:
               schema:
@@ -242,8 +242,7 @@ paths:
       description: "Returns a list with an object with the details of the requested user. A non-admin user will only get a successful response if they are asking for their own information"
       responses:
         "200": 
-          $ref: "#/components/responses/200Success"
-          description: "Details of the specified user"
+          description: "Request sucessful"
           content:
             application/json:
               schema:
@@ -270,15 +269,14 @@ paths:
                   address: "10 Downing Street, London SW1A 2AB, UK"
                   phone_number: "+446565605898"
         responses:
-          "200": 
-            $ref: "#/components/responses/200Success"
-            description: "Details of the user after its update"
+          "200":
+            description: "Request sucessful"
             content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-              example:
-                $ref: "#/components/examples/User"
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/User"
+                example:
+                  $ref: "#/components/examples/User"
           "400":
             $ref: "#/components/responses/400BadRequest"
           "401": 
@@ -314,9 +312,13 @@ paths:
           example: 5
       responses:
         "200": 
-          $ref: "#/components/responses/200Success"
+          description: "Request sucessful"
           content:
             application/json:
+              schema:
+                type: array
+                items:
+                  type: object
         "401": 
           $ref: "#/components/responses/401NotAuthenticated"
         "403": 
@@ -332,7 +334,7 @@ paths:
       description: "For admin users, returns an array of objects containing the restaurant's current day's orders, from 00hs to 23.59hs. For non-admin users, it returns the orders they placed on that day if they have any. The products associated to each order are also included in the order's information"
       responses:
         "200": 
-          $ref: "#/components/responses/200Success"
+          description: "Request sucessful"
           content:
             application/json:
               schema:
@@ -357,8 +359,11 @@ paths:
                 $ref: "#/components/examples/NewOrder"
       responses:
         "201":
-          $ref: "#/components/responses/201Created"
-          description: "Details of the order sent"
+          description: "Resource created"
+          content:
+            application/json:
+              schema:
+                type: object
         "400":
           $ref: "#/components/responses/400BadRequest"
         "401": 
@@ -380,7 +385,7 @@ paths:
       description: "Returns an object with information about the specified order's details. A non-admin user can only see the information if they were the ones that placed the order"
       responses:
         "200": 
-          $ref: "#/components/responses/200Success"
+          description: "Request sucessful"
           content:
             application/json:
               schema:
@@ -436,7 +441,7 @@ paths:
       description: "Returns a list of objects containing information about all the orders placed.  If the user is non-admin, they will only see the orders they placed"
       responses:
         "200": 
-          $ref: "#/components/responses/200Success"
+          description: "Request sucessful"
           content:
             application/json:
               schema:
@@ -463,7 +468,7 @@ paths:
             "2021,04,05"
       responses:
         "200": 
-          $ref: "#/components/responses/200Success"
+          description: "Request sucessful"
           content:
             application/json:
               schema:
@@ -491,7 +496,7 @@ paths:
           example: 3
       responses:
         "200": 
-          $ref: "#/components/responses/200Success"
+          description: "Request sucessful"
           content:
             application/json:
               schema:
