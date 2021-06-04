@@ -11,7 +11,7 @@ info:
   license:
     name: "ISC"
 servers:
-  - url: "https://localhost:8080/api/1.0.0"
+  - url: "http://localhost:8080/api/1.0.0"
     description: "Local server"
 tags:
   - name: "Registration and log in"
@@ -53,6 +53,8 @@ paths:
                 properties:
                   token:
                     type: string
+              example:
+                token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZnVsbF9uYW1lIjoiU3lzdGVtIGFkbWluIiwiZW1haWwiOiJhZG1pbkBlbWFpbC5jb20iLCJpc19hZG1pbiI6dHJ1ZSwiaWF0IjoxNjIyNzc4NDk0LCJleHAiOjE2MjI3ODAyOTR9.8fg0Uh6SY3W4AVyB1NN7btG7V3m4IYuIR_mtMCa_8jM"
         "401":
           $ref: "#/components/responses/401NotAuthenticated"
         "500":

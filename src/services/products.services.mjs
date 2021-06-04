@@ -7,6 +7,7 @@ export const createNewProduct = async (request, response) => {
   const newProductInfo = request.body;
 
   try {
+
     const product = await createProduct(newProductInfo);
     response
       .status(201)
