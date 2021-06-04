@@ -53,6 +53,7 @@ Se puede utilizar cualquiera de los usuarios provistos para realizar las pruebas
 - username: billyjoel
 - password: Password2
 
+Una vez realizado exitosamente el login, se devolverá un JWT que deberá utilizarse para realizar las consultas. Copiarlo y pegarlo en la cabecera Authorization con el tipo "Bearer token". 
 
 ***
 ## How to use
@@ -91,6 +92,7 @@ You can use any of the users provided or create your own to do the testing. Here
 - username: billyjoel
 - password: Password2
 
+Once succesfully logged in, a JWT will be returned which should be used to make requests. Copy and paste it on the Authorization header with the type "Bearer token".
 
 
 ***
