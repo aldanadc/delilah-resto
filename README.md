@@ -41,7 +41,7 @@ Necesitarás tener instalado Node.js y XAMPP (o en su defecto, Apache, MariaDB/M
 
 7. Importar el archivo **_delilah.sql_** que se encuentra en el repositorio a la base de datos creada o correr las consultas encontradas allí para rellenar las tablas con la información inicial. 
 
-8. La API está lista para ser usada. Se pueden utilizar cualquiera de las operaciones detalladas en el archivo de especificaciones **_spec.v1.yaml_** para probar los endpoints existentes. También se puede utilizar esta [colección](https://www.getpostman.com/collections/92e53db46228637fb0bc) de Postman para realizar las consultas. La URL base para todos los endpoints es **https://localhost:8080/api/1.0.0/**. Asegurarse de usar el puerto correcto si se utilizó uno distinto en el archivo **_.env_**
+8. La API está lista para ser usada. Se pueden utilizar cualquiera de las operaciones detalladas en el archivo de especificaciones **_spec.v1.yaml_** para probar los endpoints existentes. También se puede utilizar esta [colección](https://www.getpostman.com/collections/92e53db46228637fb0bc) de Postman para realizar las consultas. La URL base para todos los endpoints es **https://localhost:8080/api/1.0.0/**. Asegurarse de usar el puerto correcto si se utilizó uno distinto en el archivo **_.env_**.
 
 ### Usuarios y permisos
 Se puede utilizar cualquiera de los usuarios provistos para realizar las pruebas. Aquí hay dos ejemplos:
