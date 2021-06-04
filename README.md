@@ -10,7 +10,7 @@ Project #3 from the Full Stack Web Development course at Acámica. RESTful API f
 
 Tecnologías y recursos utilizados / Technologies and resources used:
 
-* JavaScrip
+* JavaScript
 * Node.js
 * Express.js
 * MariaDB
