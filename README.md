@@ -1,4 +1,6 @@
+
 # Delilah Restó API
+
 
 Tercer proyecto de la carrera de Desarrollo Web Full Stack en Acámica. Se trata de una API para el manejo de pedidos de un restaurante siguiendo los principios REST.
 
@@ -10,6 +12,7 @@ Project #3 from the Full Stack Web Development course at Acámica. RESTful API f
 
 Tecnologías y recursos utilizados / Technologies and resources used:
 
+* JavaScript
 * Node.js
 * Express.js
 * MariaDB
@@ -44,7 +47,7 @@ Encontrarás las especificaciones de la aplicación siguiendo el standard OpenAP
 
 7. Importar el archivo **_delilah.sql_** que se encuentra en el repositorio a la base de datos creada o correr las consultas encontradas allí para rellenar las tablas con la información inicial. 
 
-8. La API está lista para ser usada. Se pueden utilizar cualquiera de las operaciones detalladas en el archivo de especificaciones **_spec.v1.yaml_** para probar los endpoints existentes. También se puede utilizar esta [colección](https://www.getpostman.com/collections/92e53db46228637fb0bc) de Postman para realizar las consultas. La URL base para todos los endpoints es **https://localhost:8080/api/1.0.0/**. Asegurarse de usar el puerto correcto si se utilizó uno distinto en el archivo **_.env_**.
+8. La API está lista para ser usada. Se pueden utilizar cualquiera de las operaciones detalladas en el archivo de especificaciones **_spec.v1.yaml_** para probar los endpoints existentes. También se puede utilizar esta [colección](https://www.getpostman.com/collections/92e53db46228637fb0bc) de Postman para realizar las consultas. La URL base para todos los endpoints es **http://localhost:8080/api/1.0.0/**. Asegurarse de usar el puerto correcto si se utilizó uno distinto en el archivo **_.env_**.
 
 ### Usuarios y permisos
 Se puede utilizar cualquiera de los usuarios provistos para realizar las pruebas. Aquí hay dos ejemplos:
@@ -57,6 +60,7 @@ Se puede utilizar cualquiera de los usuarios provistos para realizar las pruebas
 - password: Password2
 
 Una vez realizado exitosamente el login, se devolverá un JWT que deberá utilizarse para realizar las consultas. Copiarlo y pegarlo en la cabecera Authorization con el tipo "Bearer token". 
+
 
 ![image](https://user-images.githubusercontent.com/75340355/120859230-4c22a700-c55a-11eb-81c8-57ef271ae508.png)
 
@@ -85,7 +89,7 @@ You will find the app's specifications following the OpenAPI standard in the fil
 
 7. Import the **_delilah.sql_** file found in the repository into your database or run the queries found there in order to populate the tables with the initial data.
 
-8. The API is now ready and waiting to be used. You can run any of the operations detailed in the **_spec.v1.yaml_** file to try the available endpoints. You can also use this Postman [collection](https://www.getpostman.com/collections/92e53db46228637fb0bc) to make the requests. The base URL for all endpoints is **https://localhost:8080/api/1.0.0/**. Make sure you use the correct port if you used a different one on your **_.env_** file.
+8. The API is now ready and waiting to be used. You can run any of the operations detailed in the **_spec.v1.yaml_** file to try the available endpoints. You can also use this Postman [collection](https://www.getpostman.com/collections/92e53db46228637fb0bc) to make the requests. The base URL for all endpoints is **http://localhost:8080/api/1.0.0/**. Make sure you use the correct port if you used a different one on your **_.env_** file.
 
 ---
 
