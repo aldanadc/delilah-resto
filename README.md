@@ -18,12 +18,15 @@ Tecnologías y recursos utilizados / Technologies and resources used:
 * dotenv
 * nodemon
 
-***
+![image](https://user-images.githubusercontent.com/75340355/120859230-4c22a700-c55a-11eb-81c8-57ef271ae508.png)
 
 ## Cómo utilizarlo 
 
 ### Prerrequisitos
 Necesitarás tener instalado Node.js y XAMPP (o en su defecto, Apache, MariaDB/MySQL y PHP). Se recomienda utilizar Postman para realizar las consultas.
+
+### Documentación
+Encontrarás las especificaciones de la aplicación siguiendo el standard OpenAPI en el archivo **_spec.v1.yaml_**.
 
 ### Empezando
 
@@ -55,11 +58,16 @@ Se puede utilizar cualquiera de los usuarios provistos para realizar las pruebas
 
 Una vez realizado exitosamente el login, se devolverá un JWT que deberá utilizarse para realizar las consultas. Copiarlo y pegarlo en la cabecera Authorization con el tipo "Bearer token". 
 
-***
+![image](https://user-images.githubusercontent.com/75340355/120859230-4c22a700-c55a-11eb-81c8-57ef271ae508.png)
+
+
 ## How to use
 
 ### Prerequisites
 You will need to have Node.js and XAMPP installed (or Apache, MariaDB/MySQL and PHP if you don't have XAMPP). It is recommended to use Postman for making requests.
+
+### Documentation
+You will find the app's specifications following the OpenAPI standard in the file **_spec.v1.yaml_**.
 
 ### Getting started
 
@@ -95,7 +103,7 @@ You can use any of the users provided or create your own to do the testing. Here
 Once succesfully logged in, a JWT will be returned which should be used to make requests. Copy and paste it on the Authorization header with the type "Bearer token".
 
 
-***
+![image](https://user-images.githubusercontent.com/75340355/120859230-4c22a700-c55a-11eb-81c8-57ef271ae508.png)
 
 
 
