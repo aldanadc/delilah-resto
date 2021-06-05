@@ -223,7 +223,7 @@ paths:
         "500":
           $ref: "#/components/responses/500DefaultError"
 
-  /products/disabled:
+  /products/status/disabled:
     get:
       tags:
       - "Products"

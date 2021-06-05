@@ -33,17 +33,17 @@ Encontrarás las especificaciones de la aplicación siguiendo el standard OpenAP
 
 ### Empezando
 
-1. Desde la consola, clonar el repositorio utilizando el link "https://github.com/aldanadc/delilah-resto.git" o corriendo `gh repo clone aldanadc/delilah-resto`.
+1. Desde la consola, clonar el repositorio utilizando el link "https://github.com/aldanadc/delilah-resto.git" o corriendo `gh repo clone aldanadc/delilah-resto` desde GitHub CLI.
 
-2. Correr `npm i` o `npm install` en la carpeta raíz del repositorio para instalar todas las dependencias necesarias.
+2. Correr `npm i` o `npm install` en la carpeta raíz del repositorio clonado para instalar todas las dependencias necesarias.
 
-3. Crear una base de datos local **MariaDB** o **MySQL** llamada "delilah" o con otro nombre elegido.
+3. Comenzar los servicios de MySQL y Apache.
 
-4. Renombrar el archivo **_sample.env_** que se encuentra en la carpeta raíz para que se llame solo **_.env_**, ya que estas serán tus variables de entorno. Se puede personalizar el contenido desde SERVER_PORT hacia abajo. Asegurarse de que se utilice la información correspondiente a la base de datos creada si es diferente de la provista.
+4. Crear una base de datos local **MariaDB** o **MySQL** llamada "delilah" o con otro nombre elegido.
 
-5. Comenzar los servicios de MySQL y Apache.
+5. Renombrar el archivo **_sample.env_** que se encuentra en la carpeta raíz para que se llame solo **_.env_**, ya que estas serán tus variables de entorno. Se puede personalizar el contenido desde SERVER_PORT hacia abajo. Asegurarse de que se utilice la información correspondiente a la base de datos creada si es diferente de la provista.
 
-6. Correr `npm run dev` en la consola y esperar mientras se establece la conexión con la base de datos y se crean las tablas. Al finalizar, la consola debería mostrar "Server is ready".
+6. Desde la carpeta _src_ correr en la consola `npm run dev` y esperar mientras se establece la conexión con la base de datos y se crean las tablas. Al finalizar, la consola debería mostrar "Server is ready".
 
 7. Importar el archivo **_delilah.sql_** que se encuentra en el repositorio a la base de datos creada o correr las consultas tipo insert encontradas allí para rellenar las tablas con la información inicial. 
 
@@ -75,17 +75,17 @@ You will find the app's specifications following the OpenAPI standard in the fil
 
 ### Getting started
 
-1. From your console clone the repository either by using "https://github.com/aldanadc/delilah-resto.git" or by running `gh repo clone aldanadc/delilah-resto`.
+1. From your console clone the repository either by using "https://github.com/aldanadc/delilah-resto.git" or by running `gh repo clone aldanadc/delilah-resto` from GitHub CLI.
 
-2. Run `npm i` or `npm install` on the repo's root folder to install all necessary dependencies.
+2. Run `npm i` or `npm install` on the cloned repo's root folder to install all necessary dependencies.
 
-3. Create a local **MariaDB** or **MySQL** database named "delilah" or with a name of your choosing.
+3. Start the MySQL and Apache services on your machine.
 
-4. Rename the **_sample.env_** file in the project's root folder to be only **_.env_** as these will be your environment variables. You can customize the contents of anything from SERVER_PORT down as you like. Make sure you use the correct information for the database you created for this project if it differs from the data in the file.
+4. Create a local **MariaDB** or **MySQL** database named "delilah" or with a name of your choosing.
 
-5. Start the MySQL and Apache services on your machine.
+5. Rename the **_sample.env_** file in the project's root folder to be only **_.env_** as these will be your environment variables. You can customize the contents of anything from SERVER_PORT down as you like. Make sure you use the correct information for the database you created for this project if it differs from the data in the file.
 
-6. Run `npm run dev` on your console and wait while the connection to the database is established and the tables are created. When finished, the console should show a message saying "Server is ready".
+6. From the _src_ folder, run `npm run dev` on your console and wait while the connection to the database is established and the tables are created. When finished, the console should show a message saying "Server is ready".
 
 7. Import the **_delilah.sql_** file found in the repository into your database or run the insert queries found there in order to populate the tables with the initial data.
 

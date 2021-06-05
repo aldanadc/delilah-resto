@@ -9,7 +9,7 @@ export function getRouter() {
   router.get("/products/:product_id", verifyToken, getOneProduct);
   router.patch("/products/:product_id", verifyToken, verifyIfAdmin, updateOneProduct);
   router.delete("/products/:product_id", verifyToken, verifyIfAdmin, deleteAProduct);
-  router.get("/products/get/disabled", verifyToken, verifyIfAdmin, getDisabledProducts);
+  router.get("/products/status/disabled", verifyToken, verifyIfAdmin, getDisabledProducts);
   return router;
 }
 
