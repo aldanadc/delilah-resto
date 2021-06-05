@@ -33,7 +33,7 @@ Encontrarás las especificaciones de la aplicación siguiendo el standard OpenAP
 
 ### Empezando
 
-1. Desde la consola, clonar el repositorio desde utilizando "https://github.com/aldanadc/delilah-resto.git" o corriendo `gh repo clone aldanadc/delilah-resto`.
+1. Desde la consola, clonar el repositorio utilizando el link "https://github.com/aldanadc/delilah-resto.git" o corriendo `gh repo clone aldanadc/delilah-resto`.
 
 2. Correr `npm i` o `npm install` en la carpeta raíz del repositorio para instalar todas las dependencias necesarias.
 
@@ -45,9 +45,9 @@ Encontrarás las especificaciones de la aplicación siguiendo el standard OpenAP
 
 6. Correr `npm run dev` en la consola y esperar mientras se establece la conexión con la base de datos y se crean las tablas. Al finalizar, la consola debería mostrar "Server is ready".
 
-7. Importar el archivo **_delilah.sql_** que se encuentra en el repositorio a la base de datos creada o correr las consultas encontradas allí para rellenar las tablas con la información inicial. 
+7. Importar el archivo **_delilah.sql_** que se encuentra en el repositorio a la base de datos creada o correr las consultas tipo insert encontradas allí para rellenar las tablas con la información inicial. 
 
-8. La API está lista para ser usada. Se pueden utilizar cualquiera de las operaciones detalladas en el archivo de especificaciones **_spec.v1.yaml_** para probar los endpoints existentes. También se puede utilizar esta [colección](https://www.getpostman.com/collections/92e53db46228637fb0bc) de Postman para realizar las consultas. La URL base para todos los endpoints es **http://localhost:8080/api/1.0.0/**. Asegurarse de usar el puerto correcto si se utilizó uno distinto en el archivo **_.env_**.
+8. La API está lista para ser usada. Se pueden utilizar cualquiera de las operaciones detalladas en el archivo de especificaciones **_spec.v1.yaml_** para probar los endpoints existentes. También se puede utilizar esta [colección](https://www.getpostman.com/collections/92e53db46228637fb0bc) de Postman para realizar las consultas, importándola previamente desde la aplicación. La URL base para todos los endpoints es **http://localhost:8080/api/1.0.0/**. Asegurarse de usar el puerto correcto si se utilizó uno distinto en el archivo **_.env_**.
 
 ### Usuarios y permisos
 Se puede utilizar cualquiera de los usuarios provistos para realizar las pruebas. Aquí hay dos ejemplos:
@@ -87,9 +87,9 @@ You will find the app's specifications following the OpenAPI standard in the fil
 
 6. Run `npm run dev` on your console and wait while the connection to the database is established and the tables are created. When finished, the console should show a message saying "Server is ready".
 
-7. Import the **_delilah.sql_** file found in the repository into your database or run the queries found there in order to populate the tables with the initial data.
+7. Import the **_delilah.sql_** file found in the repository into your database or run the insert queries found there in order to populate the tables with the initial data.
 
-8. The API is now ready and waiting to be used. You can run any of the operations detailed in the **_spec.v1.yaml_** file to try the available endpoints. You can also use this Postman [collection](https://www.getpostman.com/collections/92e53db46228637fb0bc) to make the requests. The base URL for all endpoints is **http://localhost:8080/api/1.0.0/**. Make sure you use the correct port if you used a different one on your **_.env_** file.
+8. The API is now ready and waiting to be used. You can run any of the operations detailed in the **_spec.v1.yaml_** file to try the available endpoints. You can also use this Postman [collection](https://www.getpostman.com/collections/92e53db46228637fb0bc) to make the requests, making an import from the app. The base URL for all endpoints is **http://localhost:8080/api/1.0.0/**. Make sure you use the correct port if you used a different one on your **_.env_** file.
 
 ---
 
