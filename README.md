@@ -68,7 +68,7 @@ Una vez realizado exitosamente el login, se devolverá un JWT que deberá utiliz
 ## How to use
 
 ### Prerequisites
-You will need to have Node.js and XAMPP installed (or Apache, MariaDB/MySQL and PHP if you don't have XAMPP). It is recommended to use Postman for making requests.
+You will need to have Node.js and XAMPP installed (or Apache, MariaDB/MySQL and PHP if you don't have XAMPP). It is recommended to use Postman to make requests.
 
 ### Documentation
 You will find the app's specifications following the OpenAPI standard in the file **_spec.v1.yaml_**.
