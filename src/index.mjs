@@ -7,6 +7,7 @@ import { getRouter as getOrdersRouter } from "./routers/orders.router.mjs";
 import { getRouter as getProductsRouter } from "./routers/products.router.mjs";
 import { getRouter as getRegisterRouter } from "./routers/register.router.mjs";
 import { getRouter as getUsersRouter } from "./routers/users.router.mjs";
+const basePath = "/api/1.0.0";
 
 
 function loadMiddlewares(server) {
@@ -22,12 +23,12 @@ function loadRouters(server) {
   const registerRouter = getRegisterRouter();
   const usersRouter = getUsersRouter();
 
-  server.use("/api/1.0.0", loginRouter);
-  server.use("/api/1.0.0", registerRouter);
-  server.use("/api/1.0.0", usersRouter);
-  server.use("/api/1.0.0", productsRouter);
-  server.use("/api/1.0.0", ordersRouter);
-  server.use("/api/1.0.0", historyRouter);
+  server.use(basePath, loginRouter);
+  server.use(basePath, registerRouter);
+  server.use(basePath, usersRouter);
+  server.use(basePath, productsRouter);
+  server.use(basePath, ordersRouter);
+  server.use(basePath, historyRouter);
 }
 
 function main() {

@@ -71,7 +71,7 @@ export const deleteUserAccount = async (request, response) => {
     await deleteUser({ user_id: tokenInfo.user_id });
 
     response
-      .status(204)
+      .status(200)
       .json({
         status: "Request successful",
         message: "User deleted"

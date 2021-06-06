@@ -136,7 +136,7 @@ export const deleteAProduct = async (request, response) => {
       await deleteProduct(productId);
 
       response
-        .status(204)
+        .status(200)
         .json({
           status: "Request successful",
           message: "Product deleted"

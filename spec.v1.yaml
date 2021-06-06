@@ -212,7 +212,7 @@ paths:
       summary: "Delete an existing product"
       description: "Allows an admin user to delete an existing product by using its ID as path parameter"
       responses:
-        "204":
+        "200":
           description: "Product deleted"
         "401": 
           $ref: "#/components/responses/401NotAuthenticated"
@@ -343,7 +343,7 @@ paths:
       summary: "Delete an existing user"
       description: "Allows all users to delete their own user account"
       responses:
-        "204":
+        "200":
           description: "User deleted"
         "401": 
           $ref: "#/components/responses/401NotAuthenticated"
@@ -489,7 +489,7 @@ paths:
                       - "delivered"
               
       responses:
-        "204": 
+        "200": 
           description: "Order status updated"
         "400":
           $ref: "#/components/responses/400BadRequest"

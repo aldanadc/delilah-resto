@@ -68,8 +68,8 @@ export const getHistoryByDate = async (request, response) => {
   try {
     const dateHistory = await getOrders({
       created_at: {
-        [Op.lt]: endOfDay, //menor que final del día
-        [Op.gte]: date //mayor que ese día a las 00
+        [Op.lt]: endOfDay, //before end of day
+        [Op.gte]: date //after that day at 00.00
       }
     });
 
