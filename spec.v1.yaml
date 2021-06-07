@@ -501,7 +501,24 @@ paths:
           $ref: "#/components/responses/404NotFound"
         "500":
           $ref: "#/components/responses/500DefaultError"
-        
+    delete:
+      tags:
+      - "Orders"
+      operationId: deleteAnOrder
+      summary: "Delete an existing order"
+      description: "Allows an admin user to delete the specified order from the database"
+      responses:
+        "200": 
+          description: "Order deleted"
+        "401": 
+          $ref: "#/components/responses/401NotAuthenticated"
+        "403": 
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "500":
+          $ref: "#/components/responses/500DefaultError"
+
   /history:
     get:
       tags:

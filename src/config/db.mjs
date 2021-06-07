@@ -203,3 +203,14 @@ export async function createOrder(orderInfo) {
 
   return newOrder;
 }
+
+
+export async function deleteOrder(filter = {}) {
+  /** @type {Sequelize.Model} */
+  const Order = DB_MODELS.Order;
+  const deletedOrder =  Order.destroy({
+    where: filter,
+  });
+    
+  return deletedOrder
+}

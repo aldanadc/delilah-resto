@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import Sequelize from "sequelize";
-import { getOrders, updateOrderStatus, createOrder } from "../config/db.mjs";
+import { getOrders, updateOrderStatus, createOrder, deleteOrder } from "../config/db.mjs";
 import { sendError400, sendError403, sendError404, sendError500 } from "./errors.services.mjs";
 const Op = Sequelize.Op;
 
@@ -177,4 +177,31 @@ export const createNewOrder = async (request, response) => {
   }
 }
 
+
+//DELETE ORDER
+export const deleteAnOrder = async (request, response) => {
+  const orderId = request.params;
+
+  try {
+    const orderToDelete = await getOrders(orderId);
+
+    if (orderToDelete.length === 0) {
+      sendError404(response);
+
+    } else {
+      await deleteOrder(orderId);
+
+      response
+        .status(200)
+        .send({
+          status: "Request successful",
+            message: "Order deleted"
+        });
+      }
+  } catch (error) {
+    console.log(error);
+
+      sendError500(response);
+    }
+}
 
